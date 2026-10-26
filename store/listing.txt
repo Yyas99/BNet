@@ -1,0 +1,91 @@
+BNet — Chrome Web Store listing
+Copy each block into the matching field of the developer dashboard.
+
+==== Store listing tab ====
+
+Name
+BNet
+
+Summary (max 132 characters)
+Mutes hateful and extremist speech on any website. Only the offending words, on your own computer. Tap to see them.
+
+Category
+Lifestyle > Well-being
+
+Language
+English
+
+Description
+BNet mutes hate speech on the websites you visit, the way a spam filter keeps junk out of your inbox. It hides only the offending words, so the rest of a post or comment still reads normally, and one click shows them again.
+
+What it mutes
+• Racist and ethnic hate, religious hate, misogyny, anti-LGBTQ+ hate, ableist hate, slurs, dehumanising language and violent extremism. Political hostility is off unless you turn it on.
+• Slurs in disguise: swapped symbols and numbers, stretched or spaced-out letters, look-alike characters and fancy lettering.
+• Claims about groups of people, threats, calls to deport or strip rights, extremist codes and slogans.
+• Words inside memes and screenshots, read on your own computer.
+
+What it leaves alone
+News reports, court cases, history writing and research that quote hate, counter-speech that argues against it, code, and anything you are typing.
+
+How it looks
+Hide the words under frosted glass, a gradient, a bleep or 13 other looks, or let one of 10 voices rewrite them kindly: "go back to your country" becomes "make yourself at home".
+
+You stay in charge
+• Click any muted phrase to read it. Choose "Not hateful" and BNet leaves those words alone from then on.
+• Strictness dial: Gentle, Balanced or Strict.
+• Turn BNet off for any site in one tap, or pause it.
+• Right-click any text to mute it, or press Alt+Shift+M.
+• Plain-text rule lists you can read, subscribe to and write yourself.
+
+Private by design
+Everything runs inside your browser. No account, no server, no analytics. Nothing you read is sent anywhere.
+
+Content note: to recognise hate speech, BNet's built-in rule list necessarily contains slurs and hateful phrases. They are used only for matching and are never shown unless you choose to reveal a muted phrase.
+
+Open source: https://github.com/Yyas99/BNet
+
+Graphic assets (upload from the store/ folder)
+Store icon 128x128: icons/icon128.png
+Screenshots 1280x800: store/screenshot-1.png to screenshot-5.png
+Small promo tile 440x280: store/promo-small-440x280.png
+Marquee promo tile 1400x560: store/promo-marquee-1400x560.png
+
+Homepage URL
+https://github.com/Yyas99/BNet
+
+Support URL
+https://github.com/Yyas99/BNet/issues
+
+
+==== Privacy practices tab ====
+
+Single purpose
+BNet hides hateful and extremist speech on web pages the user visits, replacing only the offending words with a cover or a kind rewrite that the user can reveal.
+
+Permission justifications
+storage: Saves the user's settings, rule lists, daily muted counts and the optional learning log on the user's computer.
+unlimitedStorage: The built-in rule list, subscribed lists and the learning log can exceed the default storage quota.
+contextMenus: Adds "Mute with BNet" to the right-click menu so the user can mute selected text.
+offscreen: Runs the bundled text-recognition engine (Tesseract) in an offscreen document to read words inside images on the user's computer.
+alarms: Refreshes subscribed rule lists on schedule and ends a pause the user set.
+scripting: After install or update, adds BNet to tabs that were already open so the user doesn't have to reload them.
+Host permission (<all_urls>): Hate speech can appear on any website, so BNet must read page text on every site to find and mute it. It is also used to download images already shown on the page so their text can be read locally. No page content leaves the device.
+
+Remote code
+No, I am not using remote code. All JavaScript and the WebAssembly text-recognition engine are packaged in the extension. Rule lists the user subscribes to are plain-text data (words and patterns), not code.
+
+Data usage
+Collected data: tick nothing. BNet processes page text and images only on the user's device and never transmits them; it collects no personally identifiable information, health, financial, authentication, personal communications, location, web history, user activity or website content off the device.
+Certifications: tick all three (no selling or transferring to third parties, no use unrelated to the single purpose, no use for creditworthiness or lending).
+
+Privacy policy URL
+https://yyas99.github.io/BNet/privacy.html
+(Turn on GitHub Pages first: repository Settings > Pages > Source "Deploy from a branch", branch main, folder /docs.)
+
+
+==== Package ====
+Upload dist/BNet-1.5.0.zip (built from manifest.json, icons, lib, rules/core.txt, src, ui and LICENSE).
+
+
+==== Notes for the reviewer (Distribution / test instructions field) ====
+No login is needed. Install, open any news site or social media page and BNet starts muting hateful phrases. Click a muted phrase to reveal it; open the toolbar popup to change the look, strictness or switch BNet off for the site. The file rules/core.txt contains slurs and hateful phrases on purpose: it is the matching list a hate-speech filter needs, and its text is never displayed to users unless they reveal a muted phrase.

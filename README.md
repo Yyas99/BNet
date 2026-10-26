@@ -184,6 +184,10 @@ node tools/eval.js 2 test       # dial (1-3) and split (train, dev, test or all)
 - A word list catches the wording it knows. New phrasing gets through until someone adds a rule.
 - Muting inside any Mac app, beyond the browser, is planned for later.
 
+## Privacy
+
+BNet collects nothing. Everything runs in your browser and nothing you read leaves your computer. The full policy is in [docs/privacy.html](docs/privacy.html), published at [yyas99.github.io/BNet/privacy.html](https://yyas99.github.io/BNet/privacy.html).
+
 ## Credits
 
 Text in images is read with [Tesseract.js](https://github.com/naptha/tesseract.js) and the English model from [tessdata](https://github.com/tesseract-ocr/tessdata_best), both under the Apache 2.0 licence. The evaluation uses the datasets credited above, under their own licences.

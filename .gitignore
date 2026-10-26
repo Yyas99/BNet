@@ -12,3 +12,6 @@ packs/
 # tooling
 node_modules/
 *.log
+
+# store upload package (built from the extension files)
+dist/

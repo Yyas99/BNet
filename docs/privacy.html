@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BNet privacy policy</title>
+<style>
+  :root { color-scheme: light dark; --bg: #ffffff; --text: #16181d; --muted: #5b6070; --edge: #e4e6eb; --accent: #4a78ee; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0d0e11; --text: #eef0f5; --muted: #a6abb8; --edge: #23252b; --accent: #7d9cf3; } }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 48px 20px 64px; }
+  h1 { font-size: 30px; line-height: 1.2; letter-spacing: -.02em; margin: 0 0 4px; }
+  h2 { font-size: 19px; margin: 32px 0 8px; }
+  p, li { color: var(--text); }
+  .date { color: var(--muted); margin: 0 0 28px; }
+  ul { padding-left: 20px; }
+  li { margin: 6px 0; }
+  a { color: var(--accent); }
+  .box { border: 1px solid var(--edge); border-radius: 12px; padding: 16px 18px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>BNet privacy policy</h1>
+  <p class="date">Last updated 27 October 2026</p>
+
+  <div class="box"><p><strong>In short:</strong> BNet works entirely inside your browser. It does not collect, send, sell or share any of your data. There is no BNet server, no account and no analytics.</p></div>
+
+  <h2>What BNet reads</h2>
+  <p>To mute hateful and extremist speech, BNet reads the text on the web pages you visit and, if "Text in images" is on, the words inside pictures on those pages. All of this is processed on your own computer. Text in pictures is read by a text-recognition engine (Tesseract) that ships inside the extension and runs locally.</p>
+
+  <h2>What BNet stores, and where</h2>
+  <p>BNet keeps the following in your browser's own extension storage, on your computer only:</p>
+  <ul>
+    <li>Your settings: look, strictness, categories, sites you switched off.</li>
+    <li>Rule lists: the built-in list, lists you subscribe to or import, and your own rules.</li>
+    <li>Counts of how many phrases were muted per day and per kind.</li>
+    <li>An optional learning log of phrases you muted by hand or marked as "Not hateful", with a short piece of surrounding text and the page address. You can turn it off, export it, or clear it at any time in Settings → Learning.</li>
+  </ul>
+  <p>Removing the extension deletes all of it.</p>
+
+  <h2>Network requests</h2>
+  <p>BNet makes only these requests, and none of them carry your data or your cookies:</p>
+  <ul>
+    <li><strong>Rule lists you subscribe to</strong>, fetched from the address you entered, to keep them up to date.</li>
+    <li><strong>Pictures already on the page you are viewing</strong>, downloaded again by BNet so it can read the text inside them on your computer. The request goes to the same address the page loaded the picture from.</li>
+  </ul>
+
+  <h2>Sharing</h2>
+  <p>BNet never sends your data anywhere. The "Copy request" button in Settings → Learning copies a summary of your learning log to your clipboard. Nothing is sent unless you choose to paste it somewhere yourself.</p>
+
+  <h2>Permissions</h2>
+  <p>BNet asks to read all websites because hateful speech can appear on any site. It uses that access only to find and mute it on the page in front of you, as described above.</p>
+
+  <h2>Contact</h2>
+  <p>Questions or concerns: open an issue at <a href="https://github.com/Yyas99/BNet/issues">github.com/Yyas99/BNet/issues</a>.</p>
+</main>
+</body>
+</html>
