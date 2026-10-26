@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "BNet",
   "short_name": "BNet",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Mutes hateful and extremist speech on any website, on your device. Tap any muted phrase to see it.",
   "icons": {
     "16": "icons/icon16.png",
@@ -19,6 +19,20 @@
     }
   },
   "options_page": "ui/settings.html",
+  "commands": {
+    "toggle-site": {
+      "suggested_key": {
+        "default": "Alt+Shift+B"
+      },
+      "description": "Turn BNet on or off for this site"
+    },
+    "mute-selection": {
+      "suggested_key": {
+        "default": "Alt+Shift+M"
+      },
+      "description": "Mute the selected words with BNet"
+    }
+  },
   "background": {
     "service_worker": "src/background.js"
   },
@@ -28,8 +42,7 @@
     "contextMenus",
     "offscreen",
     "alarms",
-    "scripting",
-    "tabs"
+    "scripting"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -49,10 +62,13 @@
       "css": [
         "src/content.css"
       ],
-      "run_at": "document_start"
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
     }
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
-  }
+  },
+  "minimum_chrome_version": "116"
 }

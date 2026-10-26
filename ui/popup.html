@@ -13,57 +13,63 @@
     <img class="logo" src="../icons/icon48.png" alt="" width="26" height="26">
     <div class="id">
       <h1>BNet</h1>
-      <p id="status">Active</p>
+      <p id="status" role="status">&nbsp;</p>
     </div>
-    <label class="switch" title="Turn BNet on or off"><input type="checkbox" id="enabled"><span></span></label>
+    <label class="switch" title="Turn BNet on or off everywhere"><input type="checkbox" id="enabled" aria-label="BNet on everywhere"><span></span></label>
   </header>
 
-  <div class="siteline" id="siteline" hidden>
-    <div class="sitetext"><b id="siteName"></b><small id="siteHint"></small></div>
-    <label class="switch" title="Turn BNet on or off for this site"><input type="checkbox" id="siteOn"><span></span></label>
-  </div>
-  <div class="tabline" id="tabline" hidden><span class="mark"></span><span id="tabtext"></span><button class="link" id="reloadTab" hidden>Reload this tab</button></div>
+  <!-- Every region keeps a fixed height whatever the tab is, so the popup never jumps. -->
+  <section class="site" id="site" aria-label="This tab">
+    <span class="dot" id="siteDot" aria-hidden="true"></span>
+    <div class="sitetext">
+      <b id="siteName">&nbsp;</b>
+      <span class="pageline"><span id="pageText">&nbsp;</span><button class="link" id="reloadTab" hidden>Reload</button></span>
+    </div>
+    <label class="switch" id="siteSwitch" title="Turn BNet on or off for this site"><input type="checkbox" id="siteOn" aria-label="BNet on this site"><span></span></label>
+  </section>
 
-  <section class="stage" aria-label="Preview">
+  <section class="stage" aria-label="Preview of the current look">
     <p class="specimen" id="specimen"></p>
   </section>
 
   <section class="block">
-    <h2>Look</h2>
-    <div class="looks" id="looks" aria-label="How muted words look"></div>
+    <div class="row looks-head">
+      <h2 id="lookLabel">Look</h2>
+      <div class="seg looktabs" id="lookTabs" role="tablist" aria-labelledby="lookLabel"></div>
+    </div>
+    <div class="lookpanels" id="lookPanels"></div>
   </section>
 
   <section class="block">
     <div class="row">
-      <h2>Strictness</h2>
+      <h2 id="dialLabel">Strictness</h2>
       <span class="hint" id="dialHint"></span>
     </div>
-    <div class="seg" id="dial">
+    <div class="seg" id="dial" role="group" aria-labelledby="dialLabel">
       <button data-v="1">Gentle</button>
       <button data-v="2">Balanced</button>
       <button data-v="3">Strict</button>
     </div>
   </section>
 
-  <section class="block today">
+  <section class="block today" aria-labelledby="todayLabel">
     <div class="row">
-      <h2>Today</h2>
+      <h2 id="todayLabel">Today</h2>
       <span class="count"><b id="count">0</b> muted</span>
     </div>
     <div class="bars" id="bars"></div>
   </section>
 
-  <section class="block">
-    <div class="pause" id="pause">
+  <footer>
+    <div class="pause" id="pause" role="group" aria-label="Pause BNet">
       <button class="btn ghost" data-min="15">Pause 15 min</button>
       <button class="btn ghost" data-min="60">1 hour</button>
       <button class="btn ghost" data-min="tomorrow">Until tomorrow</button>
+      <button class="btn resume" id="resume" hidden>Resume now</button>
     </div>
-    <button class="btn resume" id="resume" hidden>Resume now</button>
-  </section>
-
-  <footer>
-    <button class="link" id="open">Settings and history</button>
+    <button class="btn ghost icon" id="open" title="Settings" aria-label="Open settings">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" d="M2.5 4.5h6m3 0h2M2.5 11.5h2m3 0h6"/><circle cx="10" cy="4.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="6" cy="11.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+    </button>
   </footer>
 </main>
 <script src="../src/defaults.js"></script>

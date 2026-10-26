@@ -1,0 +1,19 @@
+# QA edge cases (agent 10): disguises, punctuation and page furniture seen in the e2e mocks.
+# text<TAB>1|0<TAB>note   (1 = muted at Balanced, 0 = left readable)
+I'm not racist, but I firmly believe that Muslims are the scum of humanity.	1	X mock post
+Honestly immigrants are vermin and they should all be deported. Change my mind	1	follow-on clause
+lmao what a f4gg0t. go back to your country	1	X mock reply
+Trans people are mentally ill, sorry not sorry	1	X mock quote
+Anyone going? jews control the media lol	1	edited comment
+Yes! Also, muslims are vermin and should be banned.	1	nested reply
+N̲I̲G̲G̲E̲R̲	1	combining underline
+nіggеr	1	Cyrillic look-alikes
+k i k e	1	spaced slur
+Refugees deserve support. Glad our town welcomed four families this year.	0	kind post
+Reported. Nobody here thinks that.	0	counter reply
+Paragraph 12 of ordinary council news about roads, parks, budgets and the weather this week.	0	filler
+The council agreed the zebra crossing plan for Elm Street.	0	ordinary
+Whisk the eggs, fold in the flour and bake for twenty minutes.	0	recipe
+Residents said the night was otherwise calm and the library budget passed.	0	news
+See you all at the market.	0	chat
+alex · 2h	0	comment metadata

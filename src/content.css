@@ -12,6 +12,8 @@ bnet-mask {
 bnet-mask:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--bn-b) 70%, transparent); }
 bnet-mask .bnet-o { transition: text-shadow .25s ease, opacity .25s ease; }
 bnet-mask .bnet-a { display: none; }
+/* Text on a page that undoes every edit is covered by a highlight instead (no change to the page) */
+::highlight(bnet-hold) { color: transparent; background-color: rgba(74,120,238,.3); text-shadow: none; text-decoration: none; }
 
 /* Every look hides the real words (.bnet-o) and draws .bnet-a instead: a decoy for "hide" looks,
    a rewrite for voices. Decoys are transparent, so effects are drawn on nothing readable. */
@@ -100,7 +102,8 @@ bnet-mask.bnet-t-redact {
 }
 
 /* Redacted stamp */
-bnet-mask.bnet-t-classified { padding: .02em .9em; border-radius: .2em; background: #121318; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), inset 0 -2px 0 color-mix(in srgb, var(--bn-v) 60%, transparent); }
+/* The outline follows the page's text colour so the bar still stands out on a black page. */
+bnet-mask.bnet-t-classified { padding: .02em .9em; border-radius: .2em; background: #121318; box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 22%, transparent), inset 0 -2px 0 color-mix(in srgb, var(--bn-v) 60%, transparent); }
 bnet-mask.bnet-t-classified .bnet-a { color: #a9aebb; font-size: .72em; letter-spacing: .16em; font-weight: 600; vertical-align: .1em; }
 
 /* Bleep */
@@ -117,7 +120,7 @@ bnet-mask.bnet-t-grawlix .bnet-a { font-weight: 800; letter-spacing: .04em; }
 bnet-mask.bnet-t-scramble .bnet-a { letter-spacing: .06em; opacity: .9; background-size: 300% 100%; animation: bnet-flow 9s linear infinite; }
 bnet-mask.bnet-t-sparkle .bnet-a { letter-spacing: .12em; }
 bnet-mask.bnet-t-bloom .bnet-a, bnet-mask.bnet-t-hearts .bnet-a { letter-spacing: .08em; }
-bnet-mask.bnet-t-whisper .bnet-a { color: color-mix(in srgb, currentColor 40%, transparent); letter-spacing: .1em; }
+bnet-mask.bnet-t-whisper .bnet-a { color: color-mix(in srgb, currentColor 55%, transparent); letter-spacing: .1em; font-weight: 700; }
 bnet-mask.bnet-t-vanish .bnet-a::before {
   content: ''; display: inline-block; width: .42em; height: .42em; margin: 0 .2em; border-radius: 50%; vertical-align: .12em;
   background: linear-gradient(135deg, var(--bn-t), var(--bn-v)); opacity: .7;
@@ -202,7 +205,13 @@ bnet-chip {
   font: 500 12.5px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
   color: #e8e9ec;
   animation: bnet-pop .18s cubic-bezier(.2,.8,.2,1);
+  /* It is shown as a popover (top layer): undo the browser's popover box and anything the page's text inherits */
+  inset: auto; margin: 0; overflow: visible; box-sizing: border-box; max-width: calc(100vw - 16px);
+  direction: ltr; unicode-bidi: isolate; white-space: nowrap; text-align: left;
+  letter-spacing: normal; text-transform: none; text-shadow: none; text-indent: 0;
 }
+bnet-chip:focus { outline: none; }
+bnet-chip button:focus-visible { outline: 2px solid #9db2ff; outline-offset: 1px; }
 bnet-chip .bnet-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; background: linear-gradient(135deg, #22b3a0, #4a78ee, #8c63e6); flex: none; }
 bnet-chip button {
   all: unset; cursor: pointer; padding: 7px 11px; border-radius: 999px; color: #e8e9ec;

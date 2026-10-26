@@ -10,33 +10,80 @@
 <link rel="stylesheet" href="settings.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <div class="shell">
   <nav class="side" aria-label="Settings sections">
     <div class="brand"><img src="../icons/icon48.png" alt="" width="28" height="28"><span>BNet</span></div>
     <a href="#overview" data-view="overview">Overview</a>
     <a href="#filtering" data-view="filtering">Filtering</a>
     <a href="#look" data-view="look">Look</a>
-    <a href="#where" data-view="where">Where it works</a>
+    <a href="#where" data-view="where">Sites</a>
     <a href="#packs" data-view="packs">Rule lists</a>
-    <a href="#learning" data-view="learning">Learning</a>
-    <a href="#history" data-view="history">History</a>
     <a href="#allow" data-view="allow">Not hateful</a>
+    <a href="#history" data-view="history">History</a>
+    <a href="#learning" data-view="learning">Learning</a>
     <a href="#about" data-view="about">About</a>
   </nav>
 
-  <main class="main">
+  <main class="main" id="main" tabindex="-1">
+    <!-- Welcome: opened once, on install -->
+    <section class="view" id="v-welcome" aria-labelledby="h-welcome">
+      <div class="hero">
+        <img src="../icons/icon128.png" alt="" width="56" height="56">
+        <div>
+          <h1 id="h-welcome">BNet is on</h1>
+          <p class="lede">It mutes hateful and extremist words on every website you visit. Only the offending words go, and one click shows them again. Nothing leaves this computer.</p>
+        </div>
+      </div>
+      <ol class="steps-list">
+        <li class="group">
+          <h3 id="wLookLabel">Pick a look</h3>
+          <div class="card pad">
+            <p class="specimen" id="wSpec"></p>
+            <div class="chips" id="wLooks" role="radiogroup" aria-labelledby="wLookLabel"></div>
+            <p class="note">More looks and voices under <a href="#look">Look</a>.</p>
+          </div>
+        </li>
+        <li class="group">
+          <h3>Choose how strict</h3>
+          <div class="card">
+            <div class="item">
+              <div><b id="wDialLabel">Strictness</b><small data-dial-desc></small></div>
+              <div class="seg dial" data-key="dial" role="group" aria-labelledby="wDialLabel"><button data-v="1">Gentle</button><button data-v="2">Balanced</button><button data-v="3">Strict</button></div>
+            </div>
+          </div>
+        </li>
+        <li class="group">
+          <h3>Pin BNet to the toolbar</h3>
+          <div class="card pad prose">
+            <p>Click the puzzle piece next to the address bar and pin BNet. Its button switches BNet off for a site, pauses it, and shows what it muted.</p>
+          </div>
+        </li>
+      </ol>
+      <div class="actions"><a class="btn primary" href="#overview" id="welcomeDone">Done</a></div>
+    </section>
+
     <!-- Overview -->
-    <section class="view" id="v-overview">
-      <h1>Overview</h1>
-      <p class="lede">What BNet has kept out of your timeline.</p>
+    <section class="view" id="v-overview" aria-labelledby="h-overview">
+      <h1 id="h-overview">Overview</h1>
+      <p class="lede">What BNet muted on the sites you visit.</p>
+      <div class="card onoff">
+        <div class="item">
+          <div><b id="onLabel">BNet</b><small id="onState"></small></div>
+          <div class="right">
+            <button class="btn ghost" id="resume" hidden>Resume now</button>
+            <label class="switch"><input type="checkbox" data-set="enabled" aria-labelledby="onLabel"><span></span></label>
+          </div>
+        </div>
+      </div>
       <div class="stats">
         <div class="stat"><b id="sToday">0</b><span>today</span></div>
         <div class="stat"><b id="sWeek">0</b><span>last 7 days</span></div>
         <div class="stat"><b id="sMonth">0</b><span>last 30 days</span></div>
       </div>
       <div class="group">
-        <h3>Last 30 days</h3>
-        <div class="card pad"><div class="chart" id="chart"></div><div class="chart-axis"><span id="axisStart"></span><span>Today</span></div></div>
+        <h3 id="chartLabel">Last 30 days</h3>
+        <div class="card pad"><div class="chart" id="chart" role="img" aria-labelledby="chartLabel"></div><div class="chart-axis" aria-hidden="true"><span id="axisStart"></span><span>Today</span></div></div>
       </div>
       <div class="group">
         <h3>By kind, last 30 days</h3>
@@ -45,70 +92,78 @@
     </section>
 
     <!-- Filtering -->
-    <section class="view" id="v-filtering">
-      <h1>Filtering</h1>
-      <p class="lede">Choose what gets muted, and how sure BNet must be first.</p>
+    <section class="view" id="v-filtering" aria-labelledby="h-filtering">
+      <h1 id="h-filtering">Filtering</h1>
+      <p class="lede">What gets muted, and how sure BNet must be first.</p>
       <div class="group">
         <h3>Strictness</h3>
         <div class="card">
           <div class="item">
-            <div><b>How sure BNet must be</b><small id="dialDesc"></small></div>
-            <div class="seg dial" id="dial"><button data-v="1">Gentle</button><button data-v="2">Balanced</button><button data-v="3">Strict</button></div>
+            <div><b id="dialLabel">How sure BNet must be</b><small data-dial-desc></small></div>
+            <div class="seg dial" data-key="dial" role="group" aria-labelledby="dialLabel"><button data-v="1">Gentle</button><button data-v="2">Balanced</button><button data-v="3">Strict</button></div>
           </div>
         </div>
       </div>
       <div class="group">
-        <h3>Kinds of speech</h3>
+        <div class="row-head"><h3>Kinds of speech</h3><span class="note">Each kind can have its own look.</span></div>
         <div class="card" id="cats"></div>
       </div>
       <div class="group">
         <h3>How much to mute</h3>
         <div class="card">
           <div class="item">
-            <div><b>Mute</b><small>Only the offending words, or the whole sentence they sit in.</small></div>
-            <div class="seg" id="scope"><button data-v="phrase">Just the words</button><button data-v="sentence">Whole sentence</button></div>
+            <div><b id="scopeLabel">Mute</b><small>Just the offending words, or the whole sentence they sit in.</small></div>
+            <div class="seg" data-key="scope" role="group" aria-labelledby="scopeLabel"><button data-v="phrase">Just the words</button><button data-v="sentence">Whole sentence</button></div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Look -->
-    <section class="view" id="v-look">
-      <h1>Look</h1>
-      <p class="lede">Pick how muted words appear. Hiding looks cover the words; voices rewrite them so the sentence still reads. Click any preview to see the original.</p>
+    <section class="view" id="v-look" aria-labelledby="h-look">
+      <h1 id="h-look">Look</h1>
+      <p class="lede">How muted words appear. Hiding looks cover the words; voices rewrite them so the sentence still reads. Click a preview to see the original.</p>
       <div class="gallery" id="gallery"></div>
       <div class="group">
         <h3>Behaviour</h3>
         <div class="card">
-          <div class="item"><div><b>Tap to reveal</b><small>Click a muted phrase to read it. Click again to hide it.</small></div><label class="switch"><input type="checkbox" data-set="reveal"><span></span></label></div>
-          <div class="item"><div><b>Count on the toolbar icon</b><small>Shows how many phrases are muted on the page you’re on.</small></div><label class="switch"><input type="checkbox" data-set="badge"><span></span></label></div>
+          <div class="item"><div><b id="lbReveal">Click to reveal</b><small>Click a muted phrase to read it. Click again to hide it.</small></div><label class="switch"><input type="checkbox" data-set="reveal" aria-labelledby="lbReveal"><span></span></label></div>
+          <div class="item"><div><b id="lbBadge">Count on the toolbar button</b><small>How many phrases are muted on the page you’re on.</small></div><label class="switch"><input type="checkbox" data-set="badge" aria-labelledby="lbBadge"><span></span></label></div>
         </div>
       </div>
     </section>
 
-    <!-- Where -->
-    <section class="view" id="v-where">
-      <h1>Where it works</h1>
-      <p class="lede">BNet runs on every website in this browser. Choose what it reads, and turn it off for any site from the toolbar popup.</p>
+    <!-- Sites -->
+    <section class="view" id="v-where" aria-labelledby="h-where">
+      <h1 id="h-where">Sites</h1>
+      <p class="lede">BNet runs on every website. Choose what it reads, and which sites it leaves alone.</p>
       <div class="group">
         <h3>Every site</h3>
         <div class="card">
-          <div class="item"><div><b>Page text</b><small>Articles, comments, forums, search results and chats.</small></div><label class="switch"><input type="checkbox" data-surface="web"><span></span></label></div>
-          <div class="item"><div><b>Text in images</b><small>Reads words in memes and screenshots on this computer, then covers just those words.</small></div><label class="switch"><input type="checkbox" data-surface="images"><span></span></label></div>
+          <div class="item"><div><b id="lbWeb">Page text</b><small>Articles, comments, forums, search results and chats.</small></div><label class="switch"><input type="checkbox" data-surface="web" aria-labelledby="lbWeb"><span></span></label></div>
+          <div class="item"><div><b id="lbImages">Text in images</b><small>Reads words in memes and screenshots on this computer, then covers just those words.</small></div><label class="switch"><input type="checkbox" data-surface="images" aria-labelledby="lbImages"><span></span></label></div>
         </div>
       </div>
       <div class="group">
-        <h3>On X</h3>
+        <div class="row-head"><h3>Sites where BNet is off</h3><span class="note" id="offCount"></span></div>
         <div class="card">
-          <div class="item"><div><b>Posts and replies</b><small>Timeline, replies, threads, link previews and trends.</small></div><label class="switch"><input type="checkbox" data-surface="posts"><span></span></label></div>
-          <div class="item"><div><b>Quote posts</b><small>The post inside a quote.</small></div><label class="switch"><input type="checkbox" data-surface="quotes"><span></span></label></div>
-          <div class="item"><div><b>Names and handles</b><small>Display names and @handles above posts and on profiles.</small></div><label class="switch"><input type="checkbox" data-surface="names"><span></span></label></div>
-          <div class="item"><div><b>Bios</b><small>Profile descriptions.</small></div><label class="switch"><input type="checkbox" data-surface="bios"><span></span></label></div>
+          <div class="item addsite">
+            <input class="field" id="siteInput" type="text" inputmode="url" placeholder="example.com" spellcheck="false" autocomplete="off" aria-label="Site to switch off" aria-describedby="siteMsg">
+            <button class="btn" id="addSite">Switch off</button>
+          </div>
+          <p class="msg pad-x" id="siteMsg" role="status"></p>
+          <div id="offSites"></div>
         </div>
+        <p class="note">You can also switch a site off from the toolbar button while you’re on it.</p>
       </div>
       <div class="group">
-        <h3>Sites where BNet is off</h3>
-        <div class="card" id="offSites"></div>
+        <h3>Extra on X</h3>
+        <div class="card">
+          <div class="item"><div><b id="lbPosts">Posts and replies</b><small>Timeline, replies, threads, link cards and trends.</small></div><label class="switch"><input type="checkbox" data-surface="posts" aria-labelledby="lbPosts"><span></span></label></div>
+          <div class="item"><div><b id="lbQuotes">Quoted posts</b><small>The post inside a quote.</small></div><label class="switch"><input type="checkbox" data-surface="quotes" aria-labelledby="lbQuotes"><span></span></label></div>
+          <div class="item"><div><b id="lbNames">Names and handles</b><small>Display names and @handles.</small></div><label class="switch"><input type="checkbox" data-surface="names" aria-labelledby="lbNames"><span></span></label></div>
+          <div class="item"><div><b id="lbBios">Bios</b><small>Profile descriptions.</small></div><label class="switch"><input type="checkbox" data-surface="bios" aria-labelledby="lbBios"><span></span></label></div>
+        </div>
       </div>
       <div class="group">
         <h3>Other apps</h3>
@@ -117,9 +172,9 @@
     </section>
 
     <!-- Rule lists -->
-    <section class="view" id="v-packs">
-      <h1>Rule lists</h1>
-      <p class="lede">BNet mutes whatever its rule lists describe, the way an ad blocker uses filter lists. Each list is a plain-text file with one rule per line.</p>
+    <section class="view" id="v-packs" aria-labelledby="h-packs">
+      <h1 id="h-packs">Rule lists</h1>
+      <p class="lede">BNet mutes what its rule lists describe, the way an ad blocker uses filter lists. Each list is a plain-text file, one rule per line.</p>
       <div class="group">
         <div class="row-head"><h3>Lists</h3><button class="btn ghost" id="updateAll">Update all</button></div>
         <div class="card" id="listCards"></div>
@@ -137,12 +192,12 @@
         </div>
       </div>
       <div class="group">
-        <div class="row-head"><h3>My rules</h3><span class="note" id="userCount"></span></div>
+        <div class="row-head"><h3 id="userLabel">My rules</h3><span class="note" id="userCount"></span></div>
         <div class="card pad">
-          <textarea id="userRules" rows="12" spellcheck="false" aria-label="My rules"></textarea>
+          <textarea id="userRules" rows="12" spellcheck="false" aria-labelledby="userLabel" aria-describedby="userErrs"></textarea>
           <div class="actions">
-            <button class="btn" id="saveUser" disabled>Apply changes</button>
-            <button class="btn ghost" id="revertUser" disabled>Revert</button>
+            <button class="btn" id="saveUser" disabled>Apply</button>
+            <button class="btn ghost" id="revertUser" disabled>Undo changes</button>
             <button class="btn ghost" id="exportUser">Export</button>
             <span class="msg" id="userMsg" role="status"></span>
           </div>
@@ -167,61 +222,64 @@ define BAD (?:vermin|rats)                        ! reusable piece, used later a
       </div>
     </section>
 
-    <!-- Learning -->
-    <section class="view" id="v-learning">
-      <h1>Learning</h1>
-      <p class="lede">BNet keeps a private log of what it muted, what you revealed, what you marked as not hateful and what you added by hand. Use it to grow your packs with AI.</p>
-      <div class="group">
-        <h3>Log</h3>
-        <div class="card">
-          <div class="item"><div><b>Keep a learning log</b><small>Stored only in this browser.</small></div><label class="switch"><input type="checkbox" data-set="learn"><span></span></label></div>
-          <div class="item"><div><b id="logSize">0 entries</b><small id="logBreak"></small></div><div class="inline"><button class="btn ghost" id="exportLog">Export log</button><button class="btn ghost danger" id="clearLog">Clear log</button></div></div>
-        </div>
-      </div>
-      <div class="group">
-        <h3>Grow a pack with AI</h3>
-        <div class="card pad steps">
-          <p><b>Copy the request.</b> It includes the rule syntax, what you added by hand and what you marked as not hateful.</p>
-          <p><b>Paste it into Claude</b> and send. It replies with a new rule list.</p>
-          <p><b>Save the reply as a .txt file</b> and import it under Rule lists, or paste its lines into My rules. BNet checks every line before using it.</p>
-          <div class="actions"><button class="btn" id="copyPrompt">Copy request</button><span class="msg" id="copyMsg" role="status"></span></div>
-        </div>
-      </div>
+    <!-- Allow -->
+    <section class="view" id="v-allow" aria-labelledby="h-allow">
+      <h1 id="h-allow">Not hateful</h1>
+      <p class="lede">Phrases you told BNet to leave alone. Remove one to have it muted again.</p>
+      <div class="card" id="allowList"></div>
     </section>
 
     <!-- History -->
-    <section class="view" id="v-history">
-      <h1>History</h1>
-      <p class="lede">Recent things BNet muted. Hover a phrase to read it.</p>
+    <section class="view" id="v-history" aria-labelledby="h-history">
+      <h1 id="h-history">History</h1>
+      <p class="lede">What BNet muted lately, and what you changed. Hover or focus a phrase to read it.</p>
       <div class="filters">
-        <select class="sel" id="hKind">
+        <select class="sel" id="hKind" aria-label="Show">
           <option value="all">Everything</option>
           <option value="hit">Muted</option>
           <option value="reveal">Revealed</option>
           <option value="not_hateful">Marked not hateful</option>
           <option value="missed">Added by hand</option>
         </select>
-        <select class="sel" id="hCat"><option value="all">All kinds</option></select>
+        <select class="sel" id="hCat" aria-label="Kind"><option value="all">All kinds</option></select>
       </div>
-      <div class="card"><table class="hist"><thead><tr><th>When</th><th>Phrase</th><th>Kind</th><th>Where</th><th></th></tr></thead><tbody id="hBody"></tbody></table></div>
-      <p class="note" id="hEmpty" hidden>Nothing here yet. Browse as usual and BNet will start keeping track.</p>
+      <div class="card tablewrap"><table class="hist"><thead><tr><th scope="col">When</th><th scope="col" class="ph">Phrase</th><th scope="col">Kind</th><th scope="col">Where</th><th scope="col"><span class="sr">Link</span></th></tr></thead><tbody id="hBody"></tbody></table></div>
+      <p class="note" id="hEmpty" hidden>Nothing here yet. Browse as usual and BNet will keep track.</p>
     </section>
 
-    <!-- Allow -->
-    <section class="view" id="v-allow">
-      <h1>Not hateful</h1>
-      <p class="lede">Phrases you told BNet to leave alone. Remove one to have it muted again.</p>
-      <div class="card" id="allowList"></div>
+    <!-- Learning -->
+    <section class="view" id="v-learning" aria-labelledby="h-learning">
+      <h1 id="h-learning">Learning</h1>
+      <p class="lede">A private log of what BNet muted, what you revealed, what you marked not hateful and what you added by hand. Use it to write better rules with AI.</p>
+      <div class="group">
+        <h3>Log</h3>
+        <div class="card">
+          <div class="item"><div><b id="lbLearn">Keep a learning log</b><small>Stored only in this browser.</small></div><label class="switch"><input type="checkbox" data-set="learn" aria-labelledby="lbLearn"><span></span></label></div>
+          <div class="item"><div><b id="logSize">0 entries</b><small id="logBreak"></small></div><div class="inline"><button class="btn ghost" id="exportLog">Export</button><button class="btn ghost danger" id="clearLog">Clear</button></div></div>
+        </div>
+      </div>
+      <div class="group">
+        <h3>Write new rules with AI</h3>
+        <div class="card pad steps">
+          <ol>
+            <li><b>Copy the request.</b> It holds the rule syntax, what you added by hand and what you marked not hateful.</li>
+            <li><b>Paste it into Claude</b> and send. It replies with a new rule list.</li>
+            <li><b>Save the reply as a .txt file</b> and import it under <a href="#packs">Rule lists</a>, or paste its lines into My rules. BNet checks every line first.</li>
+          </ol>
+          <div class="actions"><button class="btn" id="copyPrompt">Copy request</button><span class="msg" id="copyMsg" role="status"></span></div>
+        </div>
+      </div>
     </section>
 
     <!-- About -->
-    <section class="view" id="v-about">
-      <h1>About BNet</h1>
+    <section class="view" id="v-about" aria-labelledby="h-about">
+      <h1 id="h-about">About BNet</h1>
       <p class="lede">Version <span id="ver"></span>.</p>
       <div class="card pad prose">
-        <p>BNet reads the pages you visit and mutes hateful and extremist speech, leaving the rest of the text untouched.</p>
+        <p>BNet reads the pages you visit and mutes hateful and extremist speech, leaving the rest of the text as it was.</p>
         <p>Everything happens on this computer. Text matching and image reading both run locally, and nothing you read is sent anywhere.</p>
-        <p>Matching handles disguised spellings such as swapped letters, symbols, spacing and look-alike characters.</p>
+        <p>Matching sees through disguised spellings: swapped letters, symbols, spacing and look-alike characters.</p>
+        <p><a href="#welcome">Show the welcome page again</a></p>
       </div>
     </section>
   </main>

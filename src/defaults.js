@@ -22,20 +22,38 @@
     learn: true
   };
 
+  const kind = v => v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v;
+
+  // Settings come from storage, which can hold anything (an old version, a hand edit, a half-written
+  // value). A value whose type does not match the default is ignored, so one bad key never breaks a page.
   function merge(base, over) {
     const out = Array.isArray(base) ? base.slice() : { ...base };
-    for (const k of Object.keys(over || {})) {
+    if (kind(over) !== 'object') return out;
+    for (const k of Object.keys(over)) {
       const v = over[k];
-      out[k] = (v && typeof v === 'object' && !Array.isArray(v) && base && typeof base[k] === 'object') ? merge(base[k], v) : v;
+      const want = base && Object.prototype.hasOwnProperty.call(base, k) ? kind(base[k]) : null;
+      if (want && want !== kind(v)) continue;
+      out[k] = want === 'object' ? merge(base[k], v) : v;
     }
     return out;
+  }
+
+  // merge() plus the few value checks a type check cannot make.
+  function clean(over) {
+    const s = merge(DEFAULTS, over);
+    if (![1, 2, 3].includes(s.dial)) s.dial = DEFAULTS.dial;
+    if (!['phrase', 'sentence'].includes(s.scope)) s.scope = DEFAULTS.scope;
+    if (!Number.isFinite(s.pausedUntil)) s.pausedUntil = 0;
+    s.offSites = [...new Set(s.offSites.filter(x => typeof x === 'string' && x).map(x => x.toLowerCase().replace(/^www\./, '')))];
+    return s;
   }
 
   const store = {
     async get(keys) { return chrome.storage.local.get(keys); },
     async settings() {
-      const { settings } = await chrome.storage.local.get('settings');
-      return merge(DEFAULTS, settings || {});
+      let settings;
+      try { ({ settings } = await chrome.storage.local.get('settings')); } catch (e) { settings = null; }
+      return clean(settings);
     },
     async saveSettings(patch) {
       const cur = await store.settings();
@@ -48,5 +66,5 @@
 
   const today = (d) => (d || new Date()).toLocaleDateString('en-CA');
 
-  root.BNetDefaults = { DEFAULTS, merge, store, today };
+  root.BNetDefaults = { DEFAULTS, merge, clean, store, today };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -1,7 +1,7 @@
 const E = require('../src/engine.js');
 const core = require('../src/lists.js').parse(require('fs').readFileSync(require('path').join(__dirname,'..','rules','core.txt'),'utf8'),'core').data;
 const C = E.compile([core]);
-if (C.errors.length) { console.log('ERRORS', C.errors); }
+if (C.errors.length) { console.log('ERRORS', C.errors); process.exitCode = 1; }
 console.log('rules', C.count);
 const cases = [
  // [text, shouldHit(at balanced), note]
@@ -60,7 +60,7 @@ const cases = [
  ['you will never pass the exam without studying', false, 'exam'],
  ['let us not be racist in public', false, 'negated'],
  ['Did you kill all those guards?', false, 'game'],
- ['the Nazi plan to exterminate the Jews was horrific', true, 'still muted: history quotes the words'],
+ ['the Nazi plan to exterminate the Jews was horrific', false, 'history writing stays readable'],
  ['trans-shipment is a problem for customs', false, 'hyphen compound'],
  ['refugees bring nothing but crime and misery', true, 'new claim'],
  ['muslims should be buried alive', true, 'new violence'],
@@ -75,16 +75,62 @@ const cases = [
  ['moslems are vermin', true, 'spelling variant'],
  ['kill all the muslims', true, 'kill all'],
  ['deport them all', true, 'deport all'],
+ ['Maybe if Muslims weren\u2019t so horrible, things like this wouldn\u2019t happen.', true, 'counterfactual insult, curly apostrophe'],
+ ['Muslims weren\'t so bad after all', false, 'positive'],
 ];
-let fail=0;
-const enabled = E.CAT_IDS.filter(c=>c!=='political');
-for (const [t, want, note] of cases) {
-  const r = E.scan(C, t, {minSev:2, enabled});
-  const ok = (r.length>0)===want;
-  if(!ok) fail++;
-  console.log(ok?'ok  ':'FAIL', JSON.stringify(t), '→', r.map(x=>`[${x.text}] ${x.cats.join('/')} s${x.sev} ${x.rule}`).join(' ; '), note||'');
+// Extra case files: tools/cases/*.tsv, one case per line as  text<TAB>1|0[<TAB>note]
+// (1 = must be muted at Balanced, 0 = must stay readable). Lines starting with # are comments.
+// Every file in the folder is picked up on its own, so owners can add cases without touching this script.
+const fs = require('fs'), path = require('path');
+const CASE_DIR = path.join(__dirname, 'cases');
+function loadCaseFile(file) {
+  const out = [], bad = [];
+  fs.readFileSync(file, 'utf8').split(/\r?\n/).forEach((raw, i) => {
+    const line = raw.replace(/^﻿/, '');
+    if (!line.trim() || line.trim()[0] === '#') return;
+    const cols = line.split('\t');
+    const want = (cols[1] || '').trim();
+    if (cols.length < 2 || !/^[01]$/.test(want) || !cols[0].trim()) { bad.push(i + 1); return; }
+    out.push([cols[0], want === '1', (cols[2] || '').trim() || 'line ' + (i + 1)]);
+  });
+  return { out, bad };
 }
+const suites = [['built-in', cases, []]];
+if (fs.existsSync(CASE_DIR)) {
+  for (const f of fs.readdirSync(CASE_DIR).filter(f => f.endsWith('.tsv')).sort()) {
+    const { out, bad } = loadCaseFile(path.join(CASE_DIR, f));
+    suites.push([f, out, bad]);
+  }
+}
+let fail = 0;
+const enabled = E.CAT_IDS.filter(c=>c!=='political');
+const summary = [];
+for (const [name, list, bad] of suites) {
+  let f = 0;
+  if (list !== cases) console.log('--', name);
+  for (const [t, want, note] of list) {
+    const r = E.scan(C, t, {minSev:2, enabled});
+    const ok = (r.length>0)===want;
+    if(!ok) f++;
+    if (!ok || list === cases) console.log(ok?'ok  ':'FAIL', JSON.stringify(t), '→', r.map(x=>`[${x.text}] ${x.cats.join('/')} s${x.sev} ${x.rule}`).join(' ; '), note||'');
+  }
+  // A malformed line is a failure: a case that silently never runs is worse than no case.
+  for (const ln of bad) { f++; console.log('FAIL', name, 'line', ln, 'is not  text<TAB>1|0'); }
+  fail += f;
+  summary.push(`${f ? 'FAIL' : 'ok  '} ${name}: ${list.length - (f - bad.length)}/${list.length} passed${bad.length ? ', ' + bad.length + ' malformed lines' : ''}`);
+}
+console.log('-- per file');
+summary.forEach(l => console.log(l));
 console.log('fail', fail);
+if (fail) process.exitCode = 1;
 // perf
 const big = cases.map(c=>c[0]).join('. ').repeat(5);
 let t0=Date.now(); for(let i=0;i<200;i++) E.scan(C, big.slice(0,280), {minSev:2, enabled}); console.log('ms/tweet', (Date.now()-t0)/200);
+// A rule copied from the page keeps the page's curly apostrophes; it must still match.
+{
+  const L = require('../src/lists.js');
+  const user = L.parse('phrase racism 3 they weren’t invited\n', 'user').data;
+  const ok = E.scan(E.compile([user]), 'They weren’t invited, again.', { minSev: 1 }).length === 1;
+  console.log(ok ? 'ok   curly-quote user rule' : 'FAIL curly-quote user rule');
+  if (!ok) process.exitCode = 1;
+}

@@ -1,4 +1,6 @@
-/* On-device text recognition for images (Tesseract, English). One image at a time. */
+/* On-device text recognition for images (Tesseract, English). One image at a time.
+ * The Tesseract worker holds 100+ MB, so it is shut down after a minute without work and this page
+ * asks the background to close it; the next picture starts both again. */
 'use strict';
 let workerP = null;
 function getWorker() {
@@ -16,13 +18,30 @@ function getWorker() {
   return workerP;
 }
 
-const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
+const withTimeout = (p, ms) => {
+  let t;
+  return Promise.race([p, new Promise((_, rej) => { t = setTimeout(() => rej(new Error('timeout')), ms); })]).finally(() => clearTimeout(t));
+};
+const MAX_BYTES = 15e6, FETCH_MS = 15000, IDLE_MS = 60000;
+
+async function fetchImage(url) {
+  const ac = new AbortController();
+  const t = setTimeout(() => ac.abort(), FETCH_MS);
+  try {
+    const r = await fetch(url, { credentials: 'omit', signal: ac.signal });
+    if (!r.ok) throw new Error('fetch ' + r.status);
+    if (Number(r.headers.get('content-length') || 0) > MAX_BYTES) throw new Error('image too large');
+    const blob = await r.blob();
+    if (blob.size > MAX_BYTES) throw new Error('image too large');
+    return blob;
+  } finally { clearTimeout(t); }
+}
 
 async function ocr(url) {
-  const r = await fetch(url, { credentials: 'omit' });
-  if (!r.ok) throw new Error('fetch ' + r.status);
-  const blob = await r.blob();
+  const blob = await fetchImage(url);
   const bmp = await createImageBitmap(blob);
+  // A decoded 40-megapixel picture alone is 160 MB; such images are photos, not memes.
+  if (bmp.width * bmp.height > 40e6) { bmp.close(); return { ok: true, w: bmp.width, h: bmp.height, words: [] }; }
   const w = bmp.width, h = bmp.height;
   if (w < 60 || h < 40) { bmp.close(); return { ok: true, w, h, words: [] }; }
   const worker = await getWorker();
@@ -31,8 +50,8 @@ async function ocr(url) {
   bmp.close();
   const pre = await canvas.convertToBlob({ type: 'image/png' });
   let words = await read(worker, pre, scale);
-  // Pass 2 (only if pass 1 found little): the untouched image.
-  if (words.length < 3) {
+  // Pass 2 (only if pass 1 found little and the picture is small enough to be cheap): the untouched image.
+  if (words.length < 3 && w * h <= 1400000) {
     const plain = await read(worker, blob, 1);
     if (plain.length > words.length) words = plain;
   }
@@ -40,7 +59,10 @@ async function ocr(url) {
 }
 
 function prepare(bmp) {
-  const scale = bmp.width < 900 ? 2 : 1;
+  // Small pictures are enlarged for legibility; big ones are shrunk to about 1.6 megapixels, which keeps
+  // meme-sized text readable and stops a 4K photo from tying up the CPU.
+  const px = bmp.width * bmp.height;
+  const scale = bmp.width < 900 && px < 600000 ? 2 : Math.min(1, Math.sqrt(1600000 / px));
   const W = Math.round(bmp.width * scale), H = Math.round(bmp.height * scale);
   const canvas = new OffscreenCanvas(W, H);
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -86,9 +108,28 @@ async function read(worker, image, scale) {
   return words;
 }
 
-let queue = Promise.resolve();
+let queue = Promise.resolve(), pending = 0, idleTimer = null;
+function idleLater() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(async () => {
+    if (pending) return;
+    const w = workerP;
+    workerP = null;
+    if (w) { try { await (await w).terminate(); } catch (e) {} }
+    if (!pending) chrome.runtime.sendMessage({ type: 'offscreen:idle' }).catch(() => {});
+  }, IDLE_MS);
+}
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg || msg.target !== 'offscreen' || msg.type !== 'ocr') return;
-  queue = queue.then(() => ocr(msg.url)).then(sendResponse, err => sendResponse({ ok: false, error: String(err && err.message || err) }));
+  pending++;
+  clearTimeout(idleTimer);
+  // A recognition that never settles (worker crash) must not block the pictures behind it.
+  queue = queue.then(() => withTimeout(ocr(msg.url), 70000))
+    .then(sendResponse, err => {
+      if (String(err && err.message) === 'timeout') { const w = workerP; workerP = null; if (w) w.then(x => x.terminate()).catch(() => {}); }
+      sendResponse({ ok: false, error: String(err && err.message || err) });
+    })
+    .finally(() => { if (--pending === 0) idleLater(); });
   return true;
 });
+idleLater();

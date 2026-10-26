@@ -45,7 +45,8 @@ BNet reads the pages you visit (news, comments, forums, search results, X, Reddi
 - Extremist codes and slogans, Holocaust denial and calls for violence
 - Counter-speech is treated gently: when a post reports or argues against a claim ("I hear people say…", "it's a myth that…"), BNet steps that claim down a level. Slurs stay hidden either way
 - Text inside images: memes and screenshots are read on your computer, coloured text on dark backgrounds included, and only the offending words are covered
-- Every website, with extra care on X for posts, quote posts, names and bios. Code blocks, text boxes and anything you are typing are never touched
+- Every website, including comment sections inside embedded frames and the shadow-DOM components Reddit and YouTube use, with extra care on X for posts, quote posts, names and bios. Code blocks, text boxes and anything you are typing are never touched
+- News, court reports, history and research stay readable: a sentence that reports or condemns a claim ("he was jailed for tweets saying…", "Nazi propaganda claimed…") is stepped down instead of muted
 
 **How it looks**
 - Hide it: frosted glass, gradient veil, aurora, film grain, TV static, pixelate, glitch, ink bar, redacted stamp, bleep, comic swear, glyph scramble, sparkles, hearts, flowers and whisper. The real words are never drawn under these looks, only a meaningless decoy, so nothing can be read through the effect
@@ -61,6 +62,7 @@ BNet reads the pages you visit (news, comments, forums, search results, X, Reddi
 - Pause for 15 minutes, an hour, or until tomorrow
 - The toolbar number counts what is muted on the page you are on
 - Right-click any text on a page and choose **Mute "…" with BNet** to add it straight to My rules
+- Keyboard shortcuts: Option+Shift+M (Alt+Shift+M) mutes the selected text, Option+Shift+B turns BNet off or on for the current site. Change them at `brave://extensions/shortcuts`
 
 **Lists and learning**
 - The built-in list lives in `rules/core.txt`, a readable text file
@@ -117,11 +119,13 @@ The built-in list was scored against public research datasets of labelled posts.
 
 | Dataset | Hate caught | Clean posts muted |
 |---|---|---|
-| [Davidson et al.](https://github.com/t-davidson/hate-speech-and-offensive-language) (2017, tweets) | 52% | 4.6% |
-| [HateXplain](https://github.com/punyajoy/HateXplain) (2021, Twitter and Gab) | 76% | 12.9% |
-| [Dynabench hate](https://github.com/bvidgen/Dynamically-Generated-Hate-Speech-Dataset) (2021, written to fool filters), test split | 24% | 6.6% |
+| [Davidson et al.](https://github.com/t-davidson/hate-speech-and-offensive-language) (2017, tweets) | 53% | 4.6% |
+| [HateXplain](https://github.com/punyajoy/HateXplain) (2021, Twitter and Gab) | 78% | 13.0% |
+| [Dynabench hate](https://github.com/bvidgen/Dynamically-Generated-Hate-Speech-Dataset) (2021, written to fool filters), test split | 24.5% | 6.8% |
 
-Because BNet now reads every site, the list is also checked against 169,000 sentences of ordinary English from the [NLTK corpora](https://www.nltk.org/nltk_data/): news, novels, film reviews, forums and chat. It mutes something in 0.12% of them, mostly slurs and insults people really said (in the forum and overheard-conversation logs) and slurs quoted in novels. News reports of violence ("gunmen kill Christians"), history writing, speaker labels in transcripts and words that merely share a spelling with a slur (blood group ABO, a "fag break", a car's "tranny fluid") are left alone.
+Because BNet now reads every site, the list is also checked against 169,000 sentences of ordinary English from the [NLTK corpora](https://www.nltk.org/nltk_data/): news, novels, film reviews, forums and chat. It mutes something in 0.11% of them, mostly slurs and insults people really said (in the forum and overheard-conversation logs) and slurs quoted in novels. News reports of violence ("gunmen kill Christians"), history writing, speaker labels in transcripts and words that merely share a spelling with a slur (blood group ABO, a "fag break", a car's "tranny fluid") are left alone.
+
+A further 84 hard harmless sentences (news on hate crimes, court reports, history, research quoting hate, reclaimed words, gaming trash talk) are all left readable, while 18 hateful ones next to them are all muted (`tools/cases/precision.tsv`).
 
 Most of the "clean posts muted" are slurs quoted inside posts the datasets call harmless, which BNet hides on purpose. The adversarial set shows the ceiling of a word list: sarcasm, invented slurs and hate that only makes sense next to a picture slip through. Every miss you mute by hand makes the next list better.
 
@@ -132,6 +136,8 @@ The datasets are not included here. To rerun the numbers, see Development below.
 ```
 manifest.json         the extension
 rules/core.txt        the built-in rule list (generated, see tools/)
+rules/extra/          hand-written lists folded into core.txt by the build: racism and extremism,
+                      religion, gender / LGBTQ+ / ableism, and allow rules for harmless text
 src/engine.js         normalising text and matching rules
 src/lists.js          reading and writing the rule-list format
 src/treatments.js     the looks and the voices
@@ -140,7 +146,8 @@ src/background.js     lists, the learning log, counts, the right-click menu
 src/offscreen.*       on-device text recognition for images (Tesseract)
 ui/                   the popup and the settings page
 lib/tesseract/        Tesseract.js with the English model
-tools/                building and testing the rule list
+tools/                building and testing the rule list; tools/cases/ holds test sentences
+tools/e2e/            end-to-end browser tests of the whole extension
 assets/               images for this page
 ```
 
@@ -154,6 +161,9 @@ node tools/test-engine.js       # quick checks on known hateful and harmless sen
 node tools/fp.js                # harmless sentences that must never be muted
 python3 tools/make-benign.py    # downloads ordinary English text into data/benign.tsv
 node tools/web-fp.js            # how often that ordinary text gets muted, and by which rules
+node tools/e2e/run.js           # 132 end-to-end checks in a real browser (needs Playwright: npm i playwright)
+node tools/bench.js             # engine speed, and that faster code gives identical results
+node tools/voices.js            # what each rewrite voice makes of real phrases
 ```
 
 To score the list, put the three datasets in `data/` and run the evaluation:

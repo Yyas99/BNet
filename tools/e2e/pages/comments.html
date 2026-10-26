@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Forum thread</title>
+<style>body{font:15px/1.45 system-ui,sans-serif;max-width:760px;margin:20px auto;color:#1a1a1a}.cm{margin:6px 0 6px 18px;padding:6px 10px;border-left:2px solid #ccc}.meta{color:#777;font-size:12px}button{margin:8px 0}</style></head>
+<body>
+<h1>Thread: weekend plans</h1>
+<div id="thread">
+  <div class="cm" id="k1"><div class="meta">alex · 2h</div><div class="body">Anyone going to the market on Saturday?</div>
+    <div class="cm" id="k2"><div class="meta">jo · 1h</div><div class="body">Yes! Also, muslims are vermin and should be banned.</div>
+      <div class="cm" id="k3"><div class="meta">ria · 40m</div><div class="body">Reported. Nobody here thinks that.</div></div>
+    </div>
+  </div>
+  <div class="cm" id="k4"><div class="meta">sam · 30m</div><div class="body">Great <b>weather</b> forecast, <i>finally</i>.</div></div>
+</div>
+<button id="more" onclick="more()">Load more comments</button>
+<script>
+function more(){const t=document.getElementById('thread');
+ const a=document.createElement('div');a.className='cm';a.id='k5';a.innerHTML='<div class="meta">troll · now</div><div class="body">shut up retard</div>';t.appendChild(a);
+ const b=document.createElement('div');b.className='cm';b.id='k6';b.innerHTML='<div class="meta">kim · now</div><div class="body">See you all at the market.</div>';t.appendChild(b);}
+// A comment whose text is edited in place after load.
+setTimeout(()=>{document.querySelector('#k4 .body').firstChild.nodeValue='Great ';document.querySelector('#k1 .body').textContent='Anyone going? jews control the media lol';},900);
+</script>
+</body></html>

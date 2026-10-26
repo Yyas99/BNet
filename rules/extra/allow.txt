@@ -1,0 +1,43 @@
+! Title: BNet precision allow list
+! Version: 1
+! Description: Harmless text on the open web that shares words with slurs or hateful phrases.
+! An allow rule hides every match it overlaps, so each one carries enough context that a hateful use
+! of the same words ("immigrants are feral animals", "put them into the ovens") still does not fit it.
+
+! ---- words that are also slurs ----
+allow /homo\s+(?:deus|faber|ludens|viator|economicus|oeconomicus|sacer|homini|novus|sovieticus|duplex|religiosus|politicus|luzonensis|antecessor|heidelbergensis|ergaster|rudolfensis|georgicus)|(?:ecce|genus)\s+homo/   ! Latin titles and taxa
+allow /homo\s*[-\/]\s*(?:erotic\p{L}*|sexual\p{L}*|social\p{L}*|phob\p{L}*|(?:bi|trans)\s*-?\s*phob\p{L}*)/   ! "homo-erotic", "homo/biphobic"
+allow /(?:trop|plus|tres|si|aussi|bien|tot\s+ou|a\s+plus|un\s+peu|le\s+plus)\s+tard/   ! French "tard" = late
+allow /faggots?\s+(?:of\s+(?:wood|sticks|twigs|brushwood|firewood|kindling|reeds|straw)|and\s+(?:mushy\s+)?(?:peas|gravy|mash|chips|osiers|brushwood|kindling)|in\s+(?:onion\s+)?gravy)|(?:bundles?\s+of|pork|beef|liver|mr\.?\s+brain'?s)\s+faggots?/   ! firewood bundles, the UK dish
+allow /(?:out|oot|outside|dying|gasping|desperate|nip\p{L}*)\s+for\s+a\s+(?:quick\s+|cheeky\s+|crafty\s+)?fag|fags?\s+(?:paper|papers|pack|packs|stub|stubs)|(?:tax|duty|price|prices)\s+(?:on|of)\s+fags|(?:smok\p{L}*|light\p{L}*)\s+one\s+of\s+(?:my|your|his|her|their|our|\p{L}+'s)\s+fags/   ! UK cigarettes
+allow /chinks?\s+(?:of\s+(?:light|daylight|sunlight|moonlight|glasses|glass|coins?|knives|china|metal|keys|money|ice|cups?|silver|plates)|in\s+(?:the|a|his|her|their|its|my|your|our|\p{L}+'s)\s+(?:wall|walls|curtains?|door|fence|shutters?|clouds?|blinds?|logs|boards?|planks?|roof|floor|rock|stonework|[\p{L}-]+\s+armou?r))|chinks?\s+and\s+(?:crannies|cracks|crevices|holes)|(?:cracks|crannies|crevices|holes)\s+and\s+chinks/   ! a narrow gap, a clinking sound
+allow /bobby\s+coon|(?:carleton|gene)\s+(?:\p{L}\.?\s+)?coon/   ! Thornton Burgess's raccoon; surnames
+allow /squaw\s+(?:valley|peak|creek|lake|mountain|island|butte)/   ! place names
+allow /hebe\s+(?:plants?|shrubs?|bush(?:es)?|hedges?|cultivars?|species|pinguifolia|speciosa|'\p{L}+)|(?:plant|prune|grow|goddess|statue\s+of|temple\s+of)\s+(?:an?\s+)?hebe|hebe,?\s+(?:is\s+)?(?:the\s+)?(?:greek\s+)?(?:goddess|daughter\s+of\s+zeus|cupbearer)/   ! Greek goddess, garden shrub
+allow /(?:turku|known\s+as|swedish)\s*,?\s*\(?\s*abo|abo\s+akademi|abo\s*\(\s*turku/   ! Turku's Swedish name, Åbo
+allow /gobble\p{L}*[\s-]*gook/   ! "gobbledly-gook"
+allow /f\*\*d/   ! "f**d" is a censored swear, not a disguised "foid"
+allow /negro\s+(?:leagues?|national\s+league|american\s+league|world\s+series|spirituals?|motorist|river)|(?:rio|united)\s+negro/   ! history and place names (Strict only)
+allow /spastic\s+(?:diplegia|quadriplegia|hemiplegia|paraplegia|tetraplegia|paralysis|paresis|cerebral\s+palsy|dysphonia|colon|bladder|gait|muscles?)/   ! medical terms (Strict only)
+
+! "retard" the verb (slow down) and the old clinical term, not the insult
+allow /retard(?:s|ed|ing)?\s+(?:the|its|his|their|further|technical|economic|growth|progress|development|reproduction|spoilage|germination|decay|corrosion|evaporation|healing|absorption|ripening|combustion|all\s+thoughts)|retarded\s+by(?!\s+the\s+(?:day|minute|hour|second|week))|retard\s+(?:or|and|nor)\s+(?:prevent|delay|slow|check|hinder|impede|accelerate|hasten|promote)|(?:hasten|accelerate|prevent|delay|promote|advance|slow)\s+or\s+(?:\p{L}+\s+){0,3}retard|(?:flame|fire)[\s-]+retard\p{L}*/
+allow /(?:the|for|of|diagnosed\s+as)\s+mentally\s+retarded|mentally\s+retarded\s+(?:children|adults|persons|individuals|offenders|defendants|patients|students|man|woman|boy|girl|son|daughter|brother|sister|nephew|niece)/
+
+! ---- phrases that also have a harmless reading ----
+allow /(?<!(?:are|r|is|be|they'?re|like|them|those|these|such|bunch\s+of|you)\s+)feral\s+(?:pigs|hogs|animals|cats|dogs|goats|camels|horses|donkeys|deer|rabbits|foxes|pests)/   ! wildlife management; "are feral animals" still muted
+allow /(?:it|tray|dish|pan|tin|bread|cake|pie|pizza|loaf|mixture|casserole|chicken|turkey|roast|potatoes|batter|dough|biscuits|cookies|bake|lasagne|lasagna)\s+(?:back\s+)?(?:in)?to\s+the\s+oven|cast\s+into\s+the\s+oven/   ! cooking, the Sermon on the Mount
+allow /(?:the|a|of|natural|greenhouse|nerve|tear|toxic|poison|methane|hydrogen|carbon|noble|inert|hot|interstellar|exhaust|turn\s+(?:on|off))\s+gas\s+the/   ! "the gas the bacteria produce"
+allow /(?:were|was|been|being)\s+(?:\p{L}+\s+){0,2}(?:sent|taken|led|marched|herded|forced|driven|deported|transported)\s+(?:directly\s+|straight\s+|immediately\s+)?(?:in)?to\s+the\s+(?:gas\s+chambers?|ovens?|crematori(?:a|um))/   ! history of the camps, past and passive
+allow /(?:began|started|continued|decided|ordered|planned|attempted)\s+to\s+gas\s+the/   ! history; "start to gas" is not covered
+allow /(?:cats|dogs|owls|snakes|hawks|foxes|they\s+do)\s+eat\s+bats|do\s+bats\s+eat\s+cats/   ! Alice in Wonderland, nature writing
+allow /(?:you'?ll|you\s+will|you'?d|you\s+would|you\s+could|you\s+might|tried\s+to|try\s+to|trying\s+to|not|never|don'?t|didn'?t|nearly|almost)\s+(?:not\s+)?kill\s+yourself|kill\s+yourself\s+(?:laughing|with\s+work|working)/   ! a warning, not an order; "go kill yourself" still muted
+allow /kill\s+them\s+all\s+(?:and|to|then|before|for)\s+(?:get\s+|loot\s+)?(?:the\s+)?(?:loot|xp|exp|achievement|trophy|bonus|respawn|farm|level|grind|boss|quest|reward|bodies)/   ! games
+allow /send\s+them\s+home\s+(?:again|early|safely|from\s+school|to\s+bed)/   ! "send the children home again"
+allow /\d+\s*[x×]\s*1488/   ! screen resolutions
+allow /(?:hitler'?s|the\s+nazis'?|nazi|eichmann'?s|himmler'?s|the\s+reich'?s?|german)\s+(?:plan|plans|policy|decision|order|orders|attempt|campaign|programme|program)\s+to\s+(?:exterminate|murder|kill|annihilate|gas|destroy|eliminate|deport)\s+(?:the\s+)?(?:jews|roma|gypsies)(?![^.!?]{0,40}\b(?:right|good|justified|correct|necessary|great|genius|deserved|needed|should|must|need|finish\p{L}*|again|do\s+it))/   ! Holocaust history; praise for it is not covered
+allow /(?:the|and|of|mass|systematic|industriali[sz]ed)\s+(?:mass\s+)?(?:murder|killing|extermination|slaughter|persecution|deportation)\s+of\s+(?:(?:six\s+million|millions\s+of|thousands\s+of|\d[\d,]*|european|hungarian|polish|german|the)\s+)*(?:jews|roma|tutsis?|armenians|muslims|christians|rohingya|yazidis)(?![^.!?]{0,40}\b(?:right|good|justified|correct|necessary|great|genius|deserved|needed|should|must|need|finish\p{L}*|again|do\s+it))/   ! "the murder of Jews" as a noun, in history and news
+allow /(?:women|girls)\s+(?:are|were)\s+(?:still\s+)?not\s+(?:allowed|permitted)\s+to\s+(?:attend|go\s+to|drive|vote|work|study|travel|leave|speak|sing|enter|own|inherit|divorce|testify|play|watch|ride)/   ! reporting oppression; "should not be allowed" is not covered
+allow /hang\s+(?:them|'em|these\s+things|those\s+things)\s+(?:up\s+)?(?:on\s+(?:the\s+|a\s+)?(?:wall|walls|line|washing\s+line|clothesline|hooks?|hangers?|rail|door)|to\s+dry|out\s+to\s+dry|in\s+(?:the|your|my|a)\s+(?:closet|wardrobe|cupboard|hall|window))|hang\s+these\s+things/   ! laundry, pictures
+allow /kill\s+all\s+(?:the\s+)?(?:fruit\s+fl(?:y|ies)|larvae|eggs|pathogens|microbes|fungus|fungi|mould|mold|algae|insects|termites|viruses|cancer\s+cells|seeds|spores|aphids|slugs|snails|grubs|worms|mites|bed\s*bugs)/   ! pest control, medicine
+allow /(?:filthy|dirty)\s+(?:mexican|indian|chinese|african|arab|turkish|russian|thai|french)\s+(?:prison|jail|cell|hotel|motel|hostel|toilet|toilets|bathroom|street|streets|river|slum|hospital|bus|train)/   ! the place is filthy, not the people

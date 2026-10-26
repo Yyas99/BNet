@@ -1,0 +1,78 @@
+! Title: BNet extra: misogyny, anti-LGBTQ+ and ableist hate
+! Version: 1
+! Description: Extends BNet Core for sexism (incl. incel/manosphere words, rape threats, degradation), anti-LGBTQ+ hate (incl. "groomer" smears, anti-trans dehumanisation) and ableist hate.
+!
+! Folded into the core pack by the lead. Every phrase and claim here carries an id starting "gla-".
+! Reclaimed words (queer, dyke march, crip in disability culture), medical language and policy debate are left alone on purpose.
+
+! ---------- Misogyny and sexism ----------
+
+define BE (?:are|is|r|were|was|(?:they|you|y'?all)\s*'?re)\s+(?:(?:all|just|literally|nothing\s+but|basically|such|fucking|truly|clearly|simply|still|always|only|mostly|naturally|inherently|biologically|so|very|really|too|way\s+too|pretty\s+much|by\s+nature|a\s+bunch\s+of|a\s+pack\s+of|total|complete|utter)\s+)*
+
+! Incel / manosphere vocabulary: these words exist to degrade women
+slur sexism 2 wahmen, femtard, hambeast, carousel rider
+slur sexism 1 cum dump, cumdump, cum bucket, cumbucket, cum rag, cumrag, fuckhole, cumhole
+phrase sexism 2 /(?<!(?:\bnot|n't|\bnawalt)\b[^.!?\n]{0,15})awalt|(?:cock|dick)\s+carousel|rid(?:e|es|ing|den)\s+the\s+(?:cock\s+)?carousel|rape\s+fuel/ $id=gla-incel
+phrase sexism 1 /alpha\s+fucks?,?\s+beta\s+bucks|beta\s+bucks/ $id=gla-incel-weak
+
+! Stereotype claims about women (and men) that core does not list yet
+claim 2 /{BE}(?:emotional|illogical|irrational|hysterical|hormonal|self[\s-]?cent(?:er|re)d|selfish|shallow|stupid|dumb|brainless|witches|demons|snakes|vipers|parasites|leeches)(?:\s+(?:and|&)\s+\p{L}+)?(?!\s+(?:about|when|during|after|before|because|over|at|in|for|on|with|to)\b)/ $for=sexism $id=gla-women-traits
+claim 2 /(?:(?:love|like|tend|want)\s+to\s+|always\s+|just\s+|will\s+|often\s+|all\s+)*cr(?:y|ies|ying)\s+rape/ $for=sexism $id=gla-cry-rape
+phrase sexism 2 /(?:women|woman|females|girls|bitches|hoes|thots|foids)\s+(?:ain'?t|aint|are\s+not|aren'?t)\s+(?:shit|worth\s+shit|worth\s+(?:a\s+)?(?:fuck|shit))/ $id=gla-aint-shit
+phrase sexism 2 /all\s+(?:they|women|females|girls|bitches|wives)\s+(?:are|r)\s+(?:good|useful|fit|there)\s+for\s+is\s+(?:sex|fucking|breeding|cooking|cleaning|making\s+babies|having\s+babies|bringing\s+children|children|kids|their\s+(?:bodies|holes|looks))/ $id=gla-only-good-for
+phrase sexism 2 /(?:mistake|downfall|dead|doomed|ruined|went\s+(?:to\s+shit|downhill))\b[^.!?\n]{0,40}?(?:let|letting|allowed|allowing|gave|giving)\s+(?:the\s+)?women\s+(?:to\s+)?(?:vote|the\s+vote|the\s+right\s+to\s+vote)/ $id=gla-vote
+
+! Women out of power, women silenced
+claim 2 /(?:should(?:n'?t|\s+not|\s+never)|must\s+(?:not|never)|mustn'?t)\s+(?:ever\s+)?(?:be\s+(?:allowed|permitted)\s+to\s+)?(?:be\s+)?(?:elected(?:\s+officials)?|in\s+(?:power|government|leadership|positions\s+of\s+power|management|stem)|in\s+charge\s+of\s+anything|leaders|presidents?|prime\s+ministers?|bosses|managers|ceos|surgeons|judges|run\s+(?:the\s+country|countries|anything|businesses|companies)|hold\s+(?:power|positions\s+of\s+power)|have\s+(?:careers|opinions))(?![\p{L}])/ $for=sexism $id=gla-no-power
+claim 2 /(?:should|must|need\s+to|needs\s+to|ought\s+to)\s+(?:just\s+|all\s+)?(?:shut\s+(?:up|their\s+mouths)|keep\s+(?:quiet|their\s+mouths\s+shut)|be\s+(?:silenced|seen\s+and\s+not\s+heard))/ $for=sexism $id=gla-shut-up
+claim 1 /(?:should|must|need\s+to|needs\s+to|ought\s+to)\s+(?:all\s+|just\s+|always\s+)?(?:obey|submit\s+to|serve|be\s+(?:subservient|submissive|obedient)\s+to)\s+(?:men|males|a\s+man|their\s+(?:men|man|masters?|owners?))/ $for=sexism $id=gla-obey
+claim 2 /(?:belong|belongs)\s+(?:in\s+the\s+(?:bedroom|home)|at\s+home|on\s+(?:her|their)\s+knees|(?:to|under)\s+(?:men|a\s+man|their\s+(?:men|masters?|owners?)|her\s+(?:master|owner)))/ $for=sexism $id=gla-belong
+
+! Rape threats, rape wishes and victim blaming. Negations ("no woman is asking to be raped") stay readable.
+phrase sexism,extremism 3 /(?:hope|wish|pray|can'?t\s+wait\s+(?:till|until))\s+(?:that\s+)?(?:she|you|u|ya|they|your\s+(?:mum|mom|mother|sister|daughter|wife|girlfriend)|ur\s+(?:mum|mom|sister|daughter|wife|gf)|that\s+(?:bitch|slut|whore|cunt|woman|girl|dyke)|the\s+(?:bitch|slut|whore))\s+(?:gets?|got|is|are)\s+(?:gang\s*)?raped/ $id=gla-rape-wish
+phrase sexism,extremism 3 /(?:i'?ll|i\s+will|i'?d|i\s+would|gonna|going\s+to|someone\s+(?:should|needs\s+to|ought\s+to)|somebody\s+should|i\s+want\s+to|i\s+wanna|we\s+should|let'?s)\s+(?:go\s+)?(?:gang\s*)?rape\s+(?:that|this|those|these|your|ur|every|all)\b|(?<![\p{L}])rape\s+(?:that|this|those|these|every|all\s+the)\s+(?:bitch|bitches|slut|sluts|whore|whores|cunt|cunts|feminists?|dykes?|lesbians?|foids?|thots?)/ $id=gla-rape-threat
+phrase sexism 2 /(?<!(?:\bnot|n't|\bnever|\bnobody|\bno\s+(?:one|woman|women|girl|girls|victim|person|body|matter))\b[^.!?\n]{0,25})(?:(?:just|all|secretly|clearly)\s+)?(?:asking|begging|want(?:s|ed)?|love|loves|enjoy|enjoys)\s+(?:to\s+be|being|getting)\s+raped/ $id=gla-asking
+phrase sexism 2 /(?<!(?:\bnot|n't|\bnever|\bnobody|\bno\s+(?:one|woman|women|girl|victim|person))\b[^.!?\n]{0,25})(?:her|their|your)\s+(?:own\s+)?fault\s+(?:for\s+(?:getting|being)|(?:she|they|you)\s+(?:got|were|was))\s+raped/ $id=gla-her-fault
+phrase sexism 2 /(?:she|her|women|girls|females|bitches|feminists|wives|that\s+(?:bitch|slut|whore|woman|girl|cunt))\s+(?:just\s+|really\s+|all\s+)?(?:needs?|deserves?)\s+(?:is\s+)?(?:a\s+)?(?:good\s+|real\s+|proper\s+)?(?:backhand|backhanding|slapping|smack|beating|hiding|dicking|raping|pounding)/ $id=gla-good-beating
+phrase sexism 2 /(?<!(?:not|n't)\s)no\s+means\s+yes/ $id=gla-no-means-yes
+phrase sexism 2 /(?:stupid|dirty|filthy|fucking|fkn|ugly|fat|dumb|nasty|worthless|disgusting|lying|cheap|used\s+up|gold\s*digging|attention\s+seeking)\s+(?:\p{L}+\s+)?(?:whores|sluts|skanks|thots|foids|roasties)/ $id=gla-adj-whores
+phrase sexism 2 /(?:fat|ugly|hairy|unfuckable|man[\s-]?hating|butthurt|nasty|disgusting|hysterical|whiny|stupid|dumb)\s+feminists?|(?:feminism|feminists?)\s+(?:is|are)\s+(?:a\s+)?(?:cancer|cancerous|aids|a\s+disease|a\s+plague|a\s+mental\s+illness|mental\s+illness)/ $id=gla-feminism-cancer
+
+! ---------- Anti-LGBTQ+ hate ----------
+
+slur lgbtq 2 lezza, lezzer, tranner, bum boy, shirt lifter, shirtlifter
+slur lgbtq 1 lezzie, lezbo, poofs, limp wristed, limpwristed, transtrender
+phrase lgbtq 2 /alphabet\s+(?:people|crowd|cult|brigade|soup\s+(?:people|crowd|gang))/ $id=gla-alphabet
+phrase lgbtq 1 /alphabet\s+mafia|(?<!\b(?:my|our)\s+)(?:homosexual|homo|trans(?:gender)?|tranny|lgbtq?\+?|alphabet)\s+agenda|(?:identify|identifies|identifying)\s+as\s+an?\s+attack\s+helicopter|it'?s\s+a\s+man,?\s+baby/ $id=gla-lgbt-weak
+
+! Insults stacked on lesbian slurs ("fat dyke", "ugly dykes"); "dyke march" and self-description stay readable
+phrase lgbtq 2 /(?<!\b(?:i'?m|i\s+am|i\s+was|into|my|our)\s+(?:an?\s+|such\s+an?\s+|the\s+)?)(?:fat|ugly|fugly|bald|angry|disgusting|nasty|filthy|stupid|dumb|man[\s-]?hating|hairy|smelly|rotten|skanky)\s+(?:(?:lib|bull|butch|old|little|lesbian|ass)\s+)?(?:dykes?|lesbos?|lezzies?|lezzas?)(?!\s+march)/ $id=gla-ugly-dyke
+
+! "Groomer" smears
+phrase lgbtq 2 /ok(?:ay)?\s+groomers?|(?<!\b(?:i'?m|i\s+am|we'?re|we\s+are|us)\s+(?:a\s+|such\s+)?)(?:gay|trans|tranny|trannie|lgbtq?\+?|queer|drag|homo|alphabet)\s+(?:groomers?|pedos?|paedos?|pedophiles?|paedophiles?|degenerates?|deviants?|perverts?|freaks?|weirdos|fuckers|scum|filth|vermin)(?![\p{L}])/ $id=gla-groomer
+phrase lgbtq 2 /(?:drag\s+(?:queen\s+)?story\s+hours?|drag\s+shows?|pride\s+month|pride\s+parades?|gender\s+ideology|the\s+(?:trans|gay)\s+agenda)\s+(?:is|are)\s+(?:just\s+|literally\s+|all\s+about\s+)?(?:grooming|child\s+abuse|pedophilia|paedophilia)/ $id=gla-grooming-is
+claim 2 /(?:are|is|'re)\s+(?:all\s+|just\s+)?(?:grooming|recruiting|indoctrinating|corrupting|sexuali[sz]ing|preying\s+on)\s+(?:our\s+|your\s+|the\s+|young\s+|little\s+|innocent\s+)*(?:kids|children|youth|boys|girls|students)/ $for=lgbtq $id=gla-grooming
+
+! Anti-trans dehumanisation and misgendering claims
+phrase lgbtq 2 /trans[\s-]?(?:women|woman|females?|girls?|ladies)\s+(?:are|is|=)\s+(?:(?:just|still|really|actually|simply|all|only|nothing\s+but|always|basically)\s+)*(?:men|a\s+man|blokes|dudes|guys|boys)(?![\p{L}'])(?!\s+(?:and|or)\s+women)/ $id=gla-tw-men
+phrase lgbtq 2 /trans[\s-]?(?:men|man|males?|guys?|boys?)\s+(?:are|is|=)\s+(?:(?:just|still|really|actually|simply|all|only|nothing\s+but|always|basically)\s+)*(?:women|a\s+woman|girls|chicks|ladies)(?![\p{L}'])(?!\s+(?:and|or)\s+men)/ $id=gla-tm-women
+phrase lgbtq 1 /trans[\s-]?(?:women|woman|females?)\s+(?:are|is)\s+(?:(?:just|still|really|actually|all|always|biological)\s+)*(?:males|a\s+male)(?![\p{L}'])/ $id=gla-tw-males
+phrase lgbtq 1 /(?:being\s+gay|homosexuality|being\s+trans(?:gender)?|transgenderism)\s+is\s+(?:(?:just|only|a|all)\s+)*(?:choice|lifestyle\s+choice|trend|fad|phase|contagious|social\s+contagion)/ $id=gla-choice
+claim 2 /(?:need|needs|should|must|ought\s+to)\s+(?:to\s+)?(?:be\s+)?(?:cured|fixed|converted|straightened\s+out|beaten\s+straight|sent\s+to\s+conversion\s+therapy)/ $for=lgbtq $id=gla-cure
+claim 2 /(?:should|must|need\s+to|needs\s+to|ought\s+to)\s+(?:all\s+|just\s+)?(?:go\s+|get\s+|stay\s+)?back\s+in(?:to)?\s+the\s+closet/ $for=lgbtq $id=gla-closet
+claim 2 /(?:spread|spreading|spreads|carry|carrying|carries)\s+(?:aids|diseases?|their\s+diseases?|filth|degeneracy|perversion)(?![\p{L}])/ $for=lgbtq $id=gla-spread
+phrase lgbtq,sexism 2 /(?:lesbians?|lesbos?|dykes?|lezzas?|lezzies?)\s+(?:just\s+|all\s+|only\s+)?(?:needs?|want|wants)\s+(?:is\s+)?(?:a\s+)?(?:good\s+|real\s+|proper\s+)?(?:dicking|fucking|dick|cock|raping|pounding|shag)|(?:lesbians?|dykes?)\s+(?:just\s+)?(?:haven'?t|have\s+never|never)\s+(?:had|met|found)\s+(?:a\s+)?(?:good|real|the\s+right)\s+(?:man|dick|cock)/ $id=gla-lesbian
+
+! ---------- Ableist hate ----------
+
+slur ableism 2 spacker, spakker, spacca, retarted, retardo, retardos, sperg, spergs, sperglord
+slur ableism 1 fucktard, autismo
+phrase ableism 2 /(?:autistic|retarded|spastic|crippled|disabled|mongoloid|downs|down'?s)\s+(?:fuck|fucks|fucker|fuckers|cunt|cunts|freak|freaks|bastard|bastards|prat|twat|piece\s+of\s+shit)/ $id=gla-ableist-insult
+phrase ableism 1 /(?:ride|rides|riding|rode|belongs?\s+on)\s+the\s+short\s+bus|short\s+bus\s+(?:kids?|crowd|retards?)/ $id=gla-short-bus
+phrase ableism,extremism 2 /(?:bring\s+back|we\s+need(?:\s+more)?|time\s+for|in\s+defen[cs]e\s+of)\s+eugenics|eugenics\s+(?:is|was)\s+(?:(?:the|a|good|great|really|just|actually)\s+)*(?:good|right|necessary|needed|answer|solution|good\s+idea)(?![\p{L}])/ $id=gla-eugenics
+
+! ---------- Allow ----------
+! "crazy" as an intensifier ("mothers are crazy busy") is not a claim about anyone
+allow /(?:is|are|r)\s+crazy\s+(?:busy|good|fast|cheap|popular|expensive|hot|cold|talented|strong|smart|fun|cute|beautiful|rich|lucky|tired)/
+! Quoting the victim-blaming line in order to reject it
+allow /(?:phrase|saying|words|myth|idea|notion|line|lie|excuse)\s+(?:that\s+)?["“'‘]?(?:she|you)\s+(?:was|were)\s+asking\s+for\s+it/
