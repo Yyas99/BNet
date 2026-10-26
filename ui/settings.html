@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BNet settings</title>
+<link rel="icon" href="../icons/icon32.png">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="../src/content.css">
+<link rel="stylesheet" href="settings.css">
+</head>
+<body>
+<div class="shell">
+  <nav class="side" aria-label="Settings sections">
+    <div class="brand"><img src="../icons/icon48.png" alt="" width="28" height="28"><span>BNet</span></div>
+    <a href="#overview" data-view="overview">Overview</a>
+    <a href="#filtering" data-view="filtering">Filtering</a>
+    <a href="#look" data-view="look">Look</a>
+    <a href="#where" data-view="where">Where it works</a>
+    <a href="#packs" data-view="packs">Rule lists</a>
+    <a href="#learning" data-view="learning">Learning</a>
+    <a href="#history" data-view="history">History</a>
+    <a href="#allow" data-view="allow">Not hateful</a>
+    <a href="#about" data-view="about">About</a>
+  </nav>
+
+  <main class="main">
+    <!-- Overview -->
+    <section class="view" id="v-overview">
+      <h1>Overview</h1>
+      <p class="lede">What BNet has kept out of your timeline.</p>
+      <div class="stats">
+        <div class="stat"><b id="sToday">0</b><span>today</span></div>
+        <div class="stat"><b id="sWeek">0</b><span>last 7 days</span></div>
+        <div class="stat"><b id="sMonth">0</b><span>last 30 days</span></div>
+      </div>
+      <div class="group">
+        <h3>Last 30 days</h3>
+        <div class="card pad"><div class="chart" id="chart"></div><div class="chart-axis"><span id="axisStart"></span><span>Today</span></div></div>
+      </div>
+      <div class="group">
+        <h3>By kind, last 30 days</h3>
+        <div class="card pad"><div class="kinds" id="kinds"></div></div>
+      </div>
+    </section>
+
+    <!-- Filtering -->
+    <section class="view" id="v-filtering">
+      <h1>Filtering</h1>
+      <p class="lede">Choose what gets muted, and how sure BNet must be first.</p>
+      <div class="group">
+        <h3>Strictness</h3>
+        <div class="card">
+          <div class="item">
+            <div><b>How sure BNet must be</b><small id="dialDesc"></small></div>
+            <div class="seg dial" id="dial"><button data-v="1">Gentle</button><button data-v="2">Balanced</button><button data-v="3">Strict</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="group">
+        <h3>Kinds of speech</h3>
+        <div class="card" id="cats"></div>
+      </div>
+      <div class="group">
+        <h3>How much to mute</h3>
+        <div class="card">
+          <div class="item">
+            <div><b>Mute</b><small>Only the offending words, or the whole sentence they sit in.</small></div>
+            <div class="seg" id="scope"><button data-v="phrase">Just the words</button><button data-v="sentence">Whole sentence</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Look -->
+    <section class="view" id="v-look">
+      <h1>Look</h1>
+      <p class="lede">Pick how muted words appear. Hiding looks cover the words; voices rewrite them so the sentence still reads. Click any preview to see the original.</p>
+      <div class="gallery" id="gallery"></div>
+      <div class="group">
+        <h3>Behaviour</h3>
+        <div class="card">
+          <div class="item"><div><b>Tap to reveal</b><small>Click a muted phrase to read it. Click again to hide it.</small></div><label class="switch"><input type="checkbox" data-set="reveal"><span></span></label></div>
+          <div class="item"><div><b>Count on the toolbar icon</b><small>Shows how many phrases are muted on the page you’re on.</small></div><label class="switch"><input type="checkbox" data-set="badge"><span></span></label></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Where -->
+    <section class="view" id="v-where">
+      <h1>Where it works</h1>
+      <p class="lede">BNet runs on x.com in this browser. Choose which parts of X it reads.</p>
+      <div class="group">
+        <h3>On X</h3>
+        <div class="card">
+          <div class="item"><div><b>Posts and replies</b><small>Timeline, replies, threads, link previews and trends.</small></div><label class="switch"><input type="checkbox" data-surface="posts"><span></span></label></div>
+          <div class="item"><div><b>Quote posts</b><small>The post inside a quote.</small></div><label class="switch"><input type="checkbox" data-surface="quotes"><span></span></label></div>
+          <div class="item"><div><b>Names and handles</b><small>Display names and @handles above posts and on profiles.</small></div><label class="switch"><input type="checkbox" data-surface="names"><span></span></label></div>
+          <div class="item"><div><b>Bios</b><small>Profile descriptions.</small></div><label class="switch"><input type="checkbox" data-surface="bios"><span></span></label></div>
+          <div class="item"><div><b>Text in images</b><small>Reads words in memes and screenshots on this computer, then covers just those words.</small></div><label class="switch"><input type="checkbox" data-surface="images"><span></span></label></div>
+        </div>
+      </div>
+      <div class="group">
+        <h3>Other apps</h3>
+        <div class="card"><div class="item"><div><b>Whole-screen mode</b><small>Muting inside any Mac app is planned for a later version.</small></div><span class="tag">Later</span></div></div>
+      </div>
+    </section>
+
+    <!-- Rule lists -->
+    <section class="view" id="v-packs">
+      <h1>Rule lists</h1>
+      <p class="lede">BNet mutes whatever its rule lists describe, the way an ad blocker uses filter lists. Each list is a plain-text file with one rule per line.</p>
+      <div class="group">
+        <div class="row-head"><h3>Lists</h3><button class="btn ghost" id="updateAll">Update all</button></div>
+        <div class="card" id="listCards"></div>
+        <p class="note" id="updateMsg" role="status"></p>
+      </div>
+      <div class="group">
+        <h3>Add a list</h3>
+        <div class="card pad">
+          <div class="addrow">
+            <input class="field" id="listUrl" type="url" placeholder="https://example.com/bnet-list.txt" spellcheck="false" aria-label="List address">
+            <button class="btn" id="addUrl">Subscribe</button>
+            <label class="btn ghost file">Import file<input type="file" id="importFile" accept=".txt,.json,text/plain,application/json"></label>
+          </div>
+          <p class="msg" id="addMsg" role="status"></p>
+        </div>
+      </div>
+      <div class="group">
+        <div class="row-head"><h3>My rules</h3><span class="note" id="userCount"></span></div>
+        <div class="card pad">
+          <textarea id="userRules" rows="12" spellcheck="false" aria-label="My rules"></textarea>
+          <div class="actions">
+            <button class="btn" id="saveUser" disabled>Apply changes</button>
+            <button class="btn ghost" id="revertUser" disabled>Revert</button>
+            <button class="btn ghost" id="exportUser">Export</button>
+            <span class="msg" id="userMsg" role="status"></span>
+          </div>
+          <ul class="errs" id="userErrs"></ul>
+        </div>
+        <details class="syntax">
+          <summary>Rule syntax</summary>
+          <div class="card pad">
+<pre>! A comment. Header lines: ! Title:, ! Version:, ! Expires: 1 day
+
+phrase racism 3 go back to your country           ! plain words; any spacing matches
+phrase extremism,religion 3 /holo\s*hoax/         ! a regex between slashes
+slur lgbtq 3 troon, tranny                        ! disguised spellings are caught automatically
+group religion muslims, jews, christians          ! who a hateful claim can be about
+claim 3 /are\s+(?:vermin|rats)/ $tag=dehumanising ! words after a group: "muslims are vermin"
+before 3 /deport\s+all/                           ! words before a group: "deport all migrants"
+allow /chink\s+in\s+the\s+armou?r/                ! never mute this
+define BAD (?:vermin|rats)                        ! reusable piece, used later as {BAD}</pre>
+            <p>Severity: 3 unmistakable, 2 clear hate, 1 borderline (only muted on Strict). Kinds: racism, religion, sexism, lgbtq, ableism, slurs, dehumanising, extremism, political. Options at the end of a line: <code>$tag=</code> adds kinds, <code>$for=</code> limits a claim to some groups, <code>$inword</code> lets a slur match inside a word, <code>$raw</code> drops word edges.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Learning -->
+    <section class="view" id="v-learning">
+      <h1>Learning</h1>
+      <p class="lede">BNet keeps a private log of what it muted, what you revealed, what you marked as not hateful and what you added by hand. Use it to grow your packs with AI.</p>
+      <div class="group">
+        <h3>Log</h3>
+        <div class="card">
+          <div class="item"><div><b>Keep a learning log</b><small>Stored only in this browser.</small></div><label class="switch"><input type="checkbox" data-set="learn"><span></span></label></div>
+          <div class="item"><div><b id="logSize">0 entries</b><small id="logBreak"></small></div><div class="inline"><button class="btn ghost" id="exportLog">Export log</button><button class="btn ghost danger" id="clearLog">Clear log</button></div></div>
+        </div>
+      </div>
+      <div class="group">
+        <h3>Grow a pack with AI</h3>
+        <div class="card pad steps">
+          <p><b>Copy the request.</b> It includes the rule syntax, what you added by hand and what you marked as not hateful.</p>
+          <p><b>Paste it into Claude</b> and send. It replies with a new rule list.</p>
+          <p><b>Save the reply as a .txt file</b> and import it under Rule lists, or paste its lines into My rules. BNet checks every line before using it.</p>
+          <div class="actions"><button class="btn" id="copyPrompt">Copy request</button><span class="msg" id="copyMsg" role="status"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- History -->
+    <section class="view" id="v-history">
+      <h1>History</h1>
+      <p class="lede">Recent things BNet muted. Hover a phrase to read it.</p>
+      <div class="filters">
+        <select class="sel" id="hKind">
+          <option value="all">Everything</option>
+          <option value="hit">Muted</option>
+          <option value="reveal">Revealed</option>
+          <option value="not_hateful">Marked not hateful</option>
+          <option value="missed">Added by hand</option>
+        </select>
+        <select class="sel" id="hCat"><option value="all">All kinds</option></select>
+      </div>
+      <div class="card"><table class="hist"><thead><tr><th>When</th><th>Phrase</th><th>Kind</th><th>Where</th><th></th></tr></thead><tbody id="hBody"></tbody></table></div>
+      <p class="note" id="hEmpty" hidden>Nothing here yet. Scroll X and BNet will start keeping track.</p>
+    </section>
+
+    <!-- Allow -->
+    <section class="view" id="v-allow">
+      <h1>Not hateful</h1>
+      <p class="lede">Phrases you told BNet to leave alone. Remove one to have it muted again.</p>
+      <div class="card" id="allowList"></div>
+    </section>
+
+    <!-- About -->
+    <section class="view" id="v-about">
+      <h1>About BNet</h1>
+      <p class="lede">Version <span id="ver"></span>.</p>
+      <div class="card pad prose">
+        <p>BNet reads X as you scroll and mutes hateful and extremist speech, leaving the rest of the post untouched.</p>
+        <p>Everything happens on this computer. Text matching and image reading both run locally, and nothing you read is sent anywhere.</p>
+        <p>Matching handles disguised spellings such as swapped letters, symbols, spacing and look-alike characters.</p>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="../src/defaults.js"></script>
+<script src="../src/engine.js"></script>
+<script src="../src/treatments.js"></script>
+<script src="common.js"></script>
+<script src="settings.js"></script>
+</body>
+</html>

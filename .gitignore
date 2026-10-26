@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# research datasets for tools/eval.js (download them yourself, see README)
+data/
+*.misses.txt
+*.fps.txt
+
+# left over from versions before 1.1 (no longer used)
+packs/
+
+# tooling
+node_modules/
+*.log

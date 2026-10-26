@@ -1,0 +1,225 @@
+/* BNet masks — Iris gradient: teal #22b3a0 → blue #4a78ee → violet #8c63e6 */
+bnet-mask {
+  --bn-t: #22b3a0; --bn-b: #4a78ee; --bn-v: #8c63e6;
+  display: inline;
+  cursor: pointer;
+  border-radius: .4em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-color .25s ease, box-shadow .25s ease;
+  outline: none;
+}
+bnet-mask:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--bn-b) 70%, transparent); }
+bnet-mask .bnet-o { transition: text-shadow .25s ease, opacity .25s ease; }
+bnet-mask .bnet-a { display: none; }
+
+/* Every look hides the real words (.bnet-o) and draws .bnet-a instead: a decoy for "hide" looks,
+   a rewrite for voices. Decoys are transparent, so effects are drawn on nothing readable. */
+bnet-mask .bnet-o { display: none; }
+bnet-mask .bnet-a { display: inline; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+bnet-mask.bnet-cont:not(.bnet-open) { display: none; }
+bnet-mask:is(.bnet-t-frost, .bnet-t-veil, .bnet-t-aurora, .bnet-t-grain, .bnet-t-static, .bnet-t-pixel, .bnet-t-redact) .bnet-a {
+  -webkit-text-fill-color: transparent; user-select: none;
+}
+
+/* Frosted glass: decoy letters, heavily blurred, over an Iris tint */
+bnet-mask.bnet-t-frost {
+  padding: .04em .2em;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--bn-t) 22%, transparent), color-mix(in srgb, var(--bn-b) 22%, transparent) 55%, color-mix(in srgb, var(--bn-v) 22%, transparent));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bn-b) 24%, transparent);
+}
+bnet-mask.bnet-t-frost .bnet-a { text-shadow: 0 0 .34em color-mix(in srgb, currentColor 75%, transparent), 0 0 .7em color-mix(in srgb, currentColor 40%, transparent); }
+
+/* Gradient veil */
+bnet-mask.bnet-t-veil {
+  padding: .04em .2em;
+  background: linear-gradient(90deg, var(--bn-t), var(--bn-b), var(--bn-v), var(--bn-b), var(--bn-t)) 0 0 / 300% 100%;
+  opacity: .66;
+  animation: bnet-flow 9s linear infinite;
+}
+
+/* Aurora: soft drifting light */
+bnet-mask.bnet-t-aurora {
+  padding: .04em .25em;
+  background:
+    radial-gradient(60% 120% at 20% 50%, color-mix(in srgb, var(--bn-t) 70%, transparent), transparent 70%),
+    radial-gradient(60% 120% at 55% 40%, color-mix(in srgb, var(--bn-b) 70%, transparent), transparent 70%),
+    radial-gradient(60% 120% at 85% 60%, color-mix(in srgb, var(--bn-v) 70%, transparent), transparent 70%);
+  background-size: 200% 100%;
+  filter: blur(.5px) saturate(1.2);
+  opacity: .8;
+  animation: bnet-drift 14s ease-in-out infinite alternate;
+}
+
+/* Film grain */
+bnet-mask.bnet-t-grain {
+  padding: .04em .2em;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .58  0 0 0 0 .66  0 0 0 .9 0'/></filter><rect width='120' height='120' filter='url(%23n)'/></svg>") 0 0 / 120px 120px,
+    linear-gradient(90deg, color-mix(in srgb, var(--bn-t) 30%, transparent), color-mix(in srgb, var(--bn-v) 30%, transparent));
+  animation: bnet-grain .6s steps(4) infinite;
+}
+
+/* TV static */
+bnet-mask.bnet-t-static {
+  padding: .04em .2em;
+  border-radius: .25em;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='1' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='table' tableValues='0 .95'/></feComponentTransfer></filter><rect width='90' height='90' filter='url(%23n)'/></svg>") 0 0 / 90px 90px,
+    #5b5f69;
+  animation: bnet-grain .25s steps(3) infinite;
+}
+
+/* Pixelate: a mosaic drawn over nothing */
+bnet-mask.bnet-t-pixel {
+  padding: .04em .15em;
+  border-radius: .15em;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--bn-t) 35%, transparent), color-mix(in srgb, var(--bn-v) 35%, transparent)),
+    repeating-conic-gradient(color-mix(in srgb, currentColor 46%, transparent) 0 25%, color-mix(in srgb, currentColor 20%, transparent) 0 50%) 0 0 / .62em .62em;
+}
+
+/* Glitch */
+bnet-mask.bnet-t-glitch .bnet-a {
+  color: color-mix(in srgb, currentColor 45%, transparent);
+  text-shadow: -.12em 0 color-mix(in srgb, var(--bn-t) 90%, transparent), .12em 0 color-mix(in srgb, var(--bn-v) 90%, transparent), 0 0 .3em color-mix(in srgb, var(--bn-b) 60%, transparent);
+  letter-spacing: .02em;
+  filter: blur(.4px);
+  display: inline-block;
+  animation: bnet-jitter 2.6s steps(2) infinite;
+  user-select: none;
+}
+
+/* Ink bar */
+bnet-mask.bnet-t-redact {
+  padding: .04em .16em;
+  border-radius: .3em;
+  background: color-mix(in srgb, currentColor 84%, transparent);
+  box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--bn-v) 55%, transparent);
+}
+
+/* Redacted stamp */
+bnet-mask.bnet-t-classified { padding: .02em .9em; border-radius: .2em; background: #121318; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), inset 0 -2px 0 color-mix(in srgb, var(--bn-v) 60%, transparent); }
+bnet-mask.bnet-t-classified .bnet-a { color: #a9aebb; font-size: .72em; letter-spacing: .16em; font-weight: 600; vertical-align: .1em; }
+
+/* Bleep */
+bnet-mask.bnet-t-bleep { padding: .06em .62em; border-radius: 999px; background: linear-gradient(90deg, var(--bn-t), var(--bn-b) 55%, var(--bn-v)); }
+bnet-mask.bnet-t-bleep .bnet-a { color: #fff; -webkit-text-fill-color: #fff; font-size: .8em; font-weight: 650; letter-spacing: .05em; vertical-align: .08em; }
+
+/* Gradient-text looks */
+bnet-mask:is(.bnet-t-grawlix, .bnet-t-scramble, .bnet-t-sparkle, .bnet-t-kind, .bnet-t-toddler, .bnet-t-kitten, .bnet-t-grandma, .bnet-t-sportscaster, .bnet-t-bard, .bnet-t-corporate, .bnet-t-pirate, .bnet-t-hype, .bnet-t-weather) .bnet-a {
+  background: linear-gradient(90deg, var(--bn-t), var(--bn-b) 55%, var(--bn-v));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+bnet-mask.bnet-t-grawlix .bnet-a { font-weight: 800; letter-spacing: .04em; }
+bnet-mask.bnet-t-scramble .bnet-a { letter-spacing: .06em; opacity: .9; background-size: 300% 100%; animation: bnet-flow 9s linear infinite; }
+bnet-mask.bnet-t-sparkle .bnet-a { letter-spacing: .12em; }
+bnet-mask.bnet-t-bloom .bnet-a, bnet-mask.bnet-t-hearts .bnet-a { letter-spacing: .08em; }
+bnet-mask.bnet-t-whisper .bnet-a { color: color-mix(in srgb, currentColor 40%, transparent); letter-spacing: .1em; }
+bnet-mask.bnet-t-vanish .bnet-a::before {
+  content: ''; display: inline-block; width: .42em; height: .42em; margin: 0 .2em; border-radius: 50%; vertical-align: .12em;
+  background: linear-gradient(135deg, var(--bn-t), var(--bn-v)); opacity: .7;
+}
+
+/* Voices */
+bnet-mask.bnet-t-kind .bnet-a { font-weight: 500; }
+bnet-mask.bnet-t-toddler .bnet-a { font-family: "Chalkboard SE", "Comic Sans MS", "Comic Neue", ui-rounded, cursive; letter-spacing: .01em; }
+bnet-mask.bnet-t-kitten .bnet-a { font-style: italic; }
+bnet-mask.bnet-t-grandma .bnet-a { font-family: "Iowan Old Style", "Palatino", ui-serif, Georgia, serif; font-style: italic; }
+bnet-mask.bnet-t-sportscaster .bnet-a { font-weight: 800; letter-spacing: .01em; }
+bnet-mask.bnet-t-bard .bnet-a { font-family: "New York", ui-serif, "Iowan Old Style", Georgia, serif; font-style: italic; }
+bnet-mask.bnet-t-corporate .bnet-a { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; letter-spacing: -.005em; }
+bnet-mask.bnet-t-pirate .bnet-a { font-family: "Georgia", ui-serif, serif; font-weight: 700; font-style: italic; }
+bnet-mask.bnet-t-hype .bnet-a { font-weight: 700; }
+bnet-mask.bnet-t-weather .bnet-a { font-weight: 500; }
+
+/* Revealed */
+bnet-mask.bnet-open {
+  background: color-mix(in srgb, var(--bn-b) 9%, transparent) !important;
+  box-shadow: none !important; opacity: 1 !important; animation: none !important; filter: none !important;
+  padding: 0 .12em;
+}
+bnet-mask.bnet-open .bnet-o {
+  display: inline !important;
+  user-select: text;
+  text-decoration: underline dotted color-mix(in srgb, var(--bn-v) 80%, transparent);
+  text-underline-offset: .22em;
+}
+bnet-mask.bnet-open .bnet-a { display: none !important; }
+
+/* Image masks */
+.bnet-img { position: absolute; inset: 0; pointer-events: none; z-index: 3; overflow: hidden; }
+.bnet-img-mask {
+  position: absolute; pointer-events: auto; cursor: pointer; border-radius: 10px;
+  transition: background .25s ease, backdrop-filter .25s ease, box-shadow .25s ease;
+}
+.bnet-img-mask.bnet-it-frost {
+  -webkit-backdrop-filter: blur(28px) saturate(1.1) brightness(.9); backdrop-filter: blur(28px) saturate(1.1) brightness(.9);
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .6  0 0 0 0 .62  0 0 0 0 .7  0 0 0 .35 0'/></filter><rect width='120' height='120' filter='url(%23n)'/></svg>") 0 0 / 120px 120px,
+    linear-gradient(90deg, rgba(34,179,160,.62), rgba(74,120,238,.62), rgba(140,99,230,.62));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.18), 0 2px 12px rgba(0,0,0,.25);
+}
+.bnet-img-mask.bnet-it-veil {
+  background: linear-gradient(90deg, #22b3a0, #4a78ee, #8c63e6, #4a78ee, #22b3a0) 0 0 / 300% 100%;
+  animation: bnet-flow 9s linear infinite;
+}
+.bnet-img-mask.bnet-it-grain {
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .58  0 0 0 0 .66  0 0 0 .9 0'/></filter><rect width='120' height='120' filter='url(%23n)'/></svg>") 0 0 / 120px 120px;
+  animation: bnet-grain .6s steps(4) infinite;
+}
+.bnet-img-mask.bnet-it-redact { background: rgba(14,15,20,.94); box-shadow: inset 0 -3px 0 rgba(140,99,230,.6); border-radius: 6px; }
+.bnet-img-mask { overflow: hidden; isolation: isolate; }
+.bnet-img-mask .bnet-patch {
+  position: absolute; display: block; z-index: -1; pointer-events: none;
+  background-size: 100% 100%; background-repeat: no-repeat;
+  filter: blur(14px) saturate(1.1); transform: scale(1.04);
+}
+.bnet-img-mask.bnet-open .bnet-patch { display: none; }
+.bnet-img-mask.bnet-it-frost::after, .bnet-img-mask.bnet-it-grain::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(34,179,160,.32), rgba(74,120,238,.32), rgba(140,99,230,.32));
+}
+.bnet-img-mask.bnet-open::after { display: none; }
+.bnet-img-mask.bnet-open {
+  background: transparent !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  animation: none !important; box-shadow: inset 0 0 0 2px rgba(140,99,230,.85) !important;
+}
+
+/* Reveal chip */
+bnet-chip {
+  position: fixed; z-index: 2147483647;
+  display: flex; align-items: center; gap: 2px;
+  padding: 4px 4px 4px 10px;
+  border-radius: 999px;
+  background: rgba(17,18,23,.88);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3); backdrop-filter: blur(18px) saturate(1.3);
+  border: 1px solid rgba(255,255,255,.09);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.05) inset;
+  font: 500 12.5px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  color: #e8e9ec;
+  animation: bnet-pop .18s cubic-bezier(.2,.8,.2,1);
+}
+bnet-chip .bnet-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; background: linear-gradient(135deg, #22b3a0, #4a78ee, #8c63e6); flex: none; }
+bnet-chip button {
+  all: unset; cursor: pointer; padding: 7px 11px; border-radius: 999px; color: #e8e9ec;
+  font: inherit; transition: background .15s ease;
+}
+bnet-chip button:hover { background: rgba(255,255,255,.09); }
+bnet-chip button[data-act="ok"] { color: #b9c6ff; }
+bnet-chip .bnet-note { padding: 7px 10px 7px 0; color: #c9ccd6; }
+
+bnet-chip.bnet-toast { left: 50%; bottom: 28px; top: auto; translate: -50% 0; padding-right: 6px; }
+bnet-chip.bnet-toast .bnet-note { padding: 8px 10px 8px 0; color: #e8e9ec; }
+
+@keyframes bnet-flow { to { background-position: 300% 0; } }
+@keyframes bnet-grain { 0% { background-position: 0 0, 0 0; } 25% { background-position: -30px 20px, 0 0; } 50% { background-position: 20px -40px, 0 0; } 75% { background-position: -50px -10px, 0 0; } }
+@keyframes bnet-drift { to { background-position: 100% 0; } }
+@keyframes bnet-jitter { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(.04em, -.03em); } }
+@keyframes bnet-pop { from { opacity: 0; transform: translateY(4px) scale(.97); } }
+@media (prefers-reduced-motion: reduce) {
+  bnet-mask, bnet-mask .bnet-a, .bnet-img-mask, bnet-chip { animation: none !important; }
+}

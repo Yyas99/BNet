@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BNet</title>
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="../src/content.css">
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<main id="app">
+  <header class="top">
+    <img class="logo" src="../icons/icon48.png" alt="" width="26" height="26">
+    <div class="id">
+      <h1>BNet</h1>
+      <p id="status">Active on X</p>
+    </div>
+    <label class="switch" title="Turn BNet on or off"><input type="checkbox" id="enabled"><span></span></label>
+  </header>
+
+  <div class="tabline" id="tabline" hidden><span class="mark"></span><span id="tabtext"></span><button class="link" id="reloadTab" hidden>Reload this tab</button></div>
+
+  <section class="stage" aria-label="Preview">
+    <p class="specimen" id="specimen"></p>
+  </section>
+
+  <section class="block">
+    <h2>Look</h2>
+    <div class="looks" id="looks" aria-label="How muted words look"></div>
+  </section>
+
+  <section class="block">
+    <div class="row">
+      <h2>Strictness</h2>
+      <span class="hint" id="dialHint"></span>
+    </div>
+    <div class="seg" id="dial">
+      <button data-v="1">Gentle</button>
+      <button data-v="2">Balanced</button>
+      <button data-v="3">Strict</button>
+    </div>
+  </section>
+
+  <section class="block today">
+    <div class="row">
+      <h2>Today</h2>
+      <span class="count"><b id="count">0</b> muted</span>
+    </div>
+    <div class="bars" id="bars"></div>
+  </section>
+
+  <section class="block">
+    <div class="pause" id="pause">
+      <button class="btn ghost" data-min="15">Pause 15 min</button>
+      <button class="btn ghost" data-min="60">1 hour</button>
+      <button class="btn ghost" data-min="tomorrow">Until tomorrow</button>
+    </div>
+    <button class="btn resume" id="resume" hidden>Resume now</button>
+  </section>
+
+  <footer>
+    <button class="link" id="open">Settings and history</button>
+  </footer>
+</main>
+<script src="../src/defaults.js"></script>
+<script src="../src/engine.js"></script>
+<script src="../src/treatments.js"></script>
+<script src="common.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+:root {
+  --bg: #101114;
+  --surface: #17181c;
+  --surface2: #1d1e23;
+  --edge: rgba(255, 255, 255, .07);
+  --edge2: rgba(255, 255, 255, .12);
+  --text: #e8e9ec;
+  --muted: #8e95a3;
+  --faint: #5f6674;
+  --t: #22b3a0; --b: #4a78ee; --v: #8c63e6;
+  --tl: #7fe3d1; --bl: #86a3f7; --vl: #b796f5;
+  --grad: linear-gradient(90deg, var(--t), var(--b) 55%, var(--v));
+  --r: 14px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
+  --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  --serif: "New York", ui-serif, "Iowan Old Style", Georgia, serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.45 var(--sans); -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid color-mix(in srgb, var(--b) 75%, transparent); outline-offset: 2px; }
+
+/* Switch (Iris style) */
+.switch { position: relative; width: 38px; height: 22px; flex: none; }
+.switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+.switch span { position: absolute; inset: 0; border-radius: 999px; background: #2b2d33; transition: background .2s var(--ease); }
+.switch span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #9aa0ad; transition: transform .22s var(--ease), background .2s; }
+.switch input:checked + span { background: #e8e9ec; }
+.switch input:checked + span::after { transform: translateX(16px); background: #151619; }
+.switch input:focus-visible + span { outline: 2px solid color-mix(in srgb, var(--b) 75%, transparent); outline-offset: 2px; }
+
+/* Segmented control */
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; padding: 3px; gap: 2px; border-radius: 10px; background: #0c0d10; border: 1px solid var(--edge); }
+.seg button { border: 0; background: transparent; color: var(--muted); padding: 6px 8px; border-radius: 7px; transition: background .2s var(--ease), color .2s; }
+.seg button[aria-pressed="true"] { background: var(--surface2); color: var(--text); box-shadow: 0 0 0 1px var(--edge2) inset; }
+
+/* Buttons */
+.btn { border: 1px solid var(--edge2); background: var(--surface2); color: var(--text); padding: 7px 12px; border-radius: 9px; transition: background .15s, border-color .15s; }
+.btn:hover { background: #24262c; }
+.btn.ghost { background: transparent; }
+.btn.danger { color: #f08a8a; }
+.btn:disabled { opacity: .45; cursor: default; }
+
+select.sel {
+  appearance: none; border: 1px solid var(--edge2); background: var(--surface2) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%238e95a3' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>") no-repeat right 10px center;
+  padding: 6px 28px 6px 10px; border-radius: 8px; min-width: 150px;
+}
+
+/* Specimen line used in popup + settings */
+.specimen { font: 400 15px/1.55 var(--serif); color: #d9dbe1; }
+.mark { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: linear-gradient(135deg, var(--t), var(--b), var(--v)); }
