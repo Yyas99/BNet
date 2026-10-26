@@ -211,13 +211,15 @@
       while ((m = re.exec(norm))) { allowed.push({ start: m.index, end: m.index + m[0].length }); if (!m[0].length) re.lastIndex++; }
     }
 
+    // A disguised slur still needs real letters: "480" is a number, not a slur.
+    const lettery = w => { const n = (w.match(/\p{L}/gu) || []).length; return n >= 2 || n * 2 >= w.length; };
     // Slurs: one prefix-tree pass finds bounded slurs; slurs allowed inside words run on their own.
     if (compiled.slurAny) {
       compiled.slurAny.lastIndex = 0; let cm;
       while ((cm = compiled.slurAny.exec(norm))) {
         const w = cm[0];
         for (const sl of compiled.slurs) {
-          if (sl.anyLeft || !sl.full.test(w)) continue;
+          if (sl.anyLeft || !sl.full.test(w) || !lettery(w)) continue;
           raw.push({ start: cm.index, end: cm.index + w.length, cats: [...new Set([sl.cat, 'slurs'])], sev: sl.sev, rule: sl.id, kind: 'slur', word: sl.id.slice(5) });
           break;
         }
@@ -228,7 +230,7 @@
       if (!sl.anyLeft) continue;
       sl.re.lastIndex = 0; let m;
       while ((m = sl.re.exec(norm))) {
-        raw.push({ start: m.index, end: m.index + m[0].length, cats: [...new Set([sl.cat, 'slurs'])], sev: sl.sev, rule: sl.id, kind: 'slur', word: sl.id.slice(5) });
+        if (lettery(m[0])) raw.push({ start: m.index, end: m.index + m[0].length, cats: [...new Set([sl.cat, 'slurs'])], sev: sl.sev, rule: sl.id, kind: 'slur', word: sl.id.slice(5) });
         if (!m[0].length) sl.re.lastIndex++;
       }
     }

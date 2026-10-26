@@ -89,7 +89,14 @@
     <!-- Where -->
     <section class="view" id="v-where">
       <h1>Where it works</h1>
-      <p class="lede">BNet runs on x.com in this browser. Choose which parts of X it reads.</p>
+      <p class="lede">BNet runs on every website in this browser. Choose what it reads, and turn it off for any site from the toolbar popup.</p>
+      <div class="group">
+        <h3>Every site</h3>
+        <div class="card">
+          <div class="item"><div><b>Page text</b><small>Articles, comments, forums, search results and chats.</small></div><label class="switch"><input type="checkbox" data-surface="web"><span></span></label></div>
+          <div class="item"><div><b>Text in images</b><small>Reads words in memes and screenshots on this computer, then covers just those words.</small></div><label class="switch"><input type="checkbox" data-surface="images"><span></span></label></div>
+        </div>
+      </div>
       <div class="group">
         <h3>On X</h3>
         <div class="card">
@@ -97,8 +104,11 @@
           <div class="item"><div><b>Quote posts</b><small>The post inside a quote.</small></div><label class="switch"><input type="checkbox" data-surface="quotes"><span></span></label></div>
           <div class="item"><div><b>Names and handles</b><small>Display names and @handles above posts and on profiles.</small></div><label class="switch"><input type="checkbox" data-surface="names"><span></span></label></div>
           <div class="item"><div><b>Bios</b><small>Profile descriptions.</small></div><label class="switch"><input type="checkbox" data-surface="bios"><span></span></label></div>
-          <div class="item"><div><b>Text in images</b><small>Reads words in memes and screenshots on this computer, then covers just those words.</small></div><label class="switch"><input type="checkbox" data-surface="images"><span></span></label></div>
         </div>
+      </div>
+      <div class="group">
+        <h3>Sites where BNet is off</h3>
+        <div class="card" id="offSites"></div>
       </div>
       <div class="group">
         <h3>Other apps</h3>
@@ -194,7 +204,7 @@ define BAD (?:vermin|rats)                        ! reusable piece, used later a
         <select class="sel" id="hCat"><option value="all">All kinds</option></select>
       </div>
       <div class="card"><table class="hist"><thead><tr><th>When</th><th>Phrase</th><th>Kind</th><th>Where</th><th></th></tr></thead><tbody id="hBody"></tbody></table></div>
-      <p class="note" id="hEmpty" hidden>Nothing here yet. Scroll X and BNet will start keeping track.</p>
+      <p class="note" id="hEmpty" hidden>Nothing here yet. Browse as usual and BNet will start keeping track.</p>
     </section>
 
     <!-- Allow -->
@@ -209,7 +219,7 @@ define BAD (?:vermin|rats)                        ! reusable piece, used later a
       <h1>About BNet</h1>
       <p class="lede">Version <span id="ver"></span>.</p>
       <div class="card pad prose">
-        <p>BNet reads X as you scroll and mutes hateful and extremist speech, leaving the rest of the post untouched.</p>
+        <p>BNet reads the pages you visit and mutes hateful and extremist speech, leaving the rest of the text untouched.</p>
         <p>Everything happens on this computer. Text matching and image reading both run locally, and nothing you read is sent anywhere.</p>
         <p>Matching handles disguised spellings such as swapped letters, symbols, spacing and look-alike characters.</p>
       </div>

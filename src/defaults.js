@@ -15,7 +15,8 @@
       slurs: 'default', dehumanising: 'default', extremism: 'default', political: 'default'
     },
     scope: 'phrase', // phrase | sentence
-    surfaces: { posts: true, quotes: true, names: true, bios: true, images: true },
+    surfaces: { web: true, posts: true, quotes: true, names: true, bios: true, images: true },
+    offSites: [], // sites where BNet stays off, by host name without www.
     reveal: true,
     badge: true,
     learn: true

@@ -47,7 +47,7 @@ function renderStatus() {
     const d = new Date(s.pausedUntil);
     const sameDay = d.toDateString() === new Date().toDateString();
     st.textContent = 'Paused until ' + (sameDay ? BNetUI.fmtTime(d) : 'tomorrow, ' + BNetUI.fmtTime(d));
-  } else st.textContent = 'Active on X';
+  } else st.textContent = 'Active';
   $('enabled').checked = !!s.enabled;
   $('pause').hidden = paused || !s.enabled;
   $('resume').hidden = !paused;
@@ -91,7 +91,8 @@ async function renderTab() {
   const line = $('tabline'), txt = $('tabtext'), btn = $('reloadTab');
   let tab;
   try { [tab] = await chrome.tabs.query({ active: true, currentWindow: true }); } catch (e) { return; }
-  if (!tab || !/^https:\/\/(mobile\.)?(x|twitter)\.com\//.test(tab.url || '')) { line.hidden = true; return; }
+  if (!tab || !/^https?:\/\//.test(tab.url || '')) { line.hidden = true; $('siteline').hidden = true; return; }
+  renderSite(tab);
   line.hidden = false;
   txt.textContent = 'Checking this page\u2026';
   let res = null;
@@ -99,10 +100,32 @@ async function renderTab() {
   line.classList.toggle('warn', !res || !res.active);
   btn.hidden = !!res;
   if (!res) txt.textContent = 'BNet is not running in this tab yet.';
+  else if (res.siteOff) txt.textContent = 'Off on this site.';
   else if (!res.active) txt.textContent = 'Off or paused in this tab.';
   else if (!res.rules) { line.classList.add('warn'); txt.textContent = 'Running, but no rules loaded.'; }
   else txt.textContent = (res.muted ? res.muted + (res.muted === 1 ? ' phrase' : ' phrases') + ' muted on this page' : 'Nothing to mute on this page') + ' \u2014 ' + res.scanned + ' blocks read, ' + res.rules.toLocaleString() + ' rules';
   btn.onclick = async () => { await chrome.tabs.reload(tab.id); window.close(); };
+}
+
+function siteOf(url) {
+  try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
+}
+function renderSite(tab) {
+  const site = siteOf(tab.url);
+  const row = $('siteline');
+  if (!site) { row.hidden = true; return; }
+  const on = !(s.offSites || []).includes(site);
+  row.hidden = false;
+  $('siteName').textContent = site;
+  $('siteHint').textContent = on ? 'BNet is on for this site' : 'BNet is off for this site';
+  $('siteOn').checked = on;
+  $('siteOn').onchange = async e => {
+    const off = new Set(s.offSites || []);
+    if (e.target.checked) off.delete(site); else off.add(site);
+    s = await store.saveSettings({ offSites: [...off] });
+    renderSite(tab);
+    setTimeout(renderTab, 300);
+  };
 }
 
 async function init() {

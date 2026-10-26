@@ -7,7 +7,7 @@ const CATS = [
   ['lgbtq', 'Anti-LGBTQ+ hate'], ['ableism', 'Ableist hate'], ['slurs', 'Slurs'], ['dehumanising', 'Dehumanising language'],
   ['extremism', 'Violent extremism'], ['political', 'Political hostility']
 ];
-const X_URLS = ['https://x.com/*', 'https://twitter.com/*', 'https://mobile.x.com/*', 'https://mobile.twitter.com/*'];
+const WEB_URLS = ['http://*/*', 'https://*/*'];
 const LOG_CAP = 20000, SEEN_CAP = 5000, DAYS_KEPT = 120;
 
 let chain = Promise.resolve();
@@ -93,7 +93,7 @@ async function migrateOld() {
   const st = await chrome.storage.local.get(['personal', 'packs', 'packStates', 'userRules']);
   let user = st.userRules;
   if (user == null) {
-    user = '! My rules: one rule per line. Right-click text on X and choose "Mute with BNet" to add one.\n';
+    user = '! My rules: one rule per line. Right-click text on any page and choose "Mute with BNet" to add one.\n';
     for (const p of (st.personal && st.personal.phrases) || []) {
       user += 'phrase ' + ((p.cats && p.cats[0]) || 'dehumanising') + ' ' + (p.sev || 3) + ' ' + (p.literal ? p.pattern : '/' + p.pattern + '/') + '\n';
     }
@@ -133,10 +133,10 @@ async function guessCategory(text) {
 /* ---------- menus ---------- */
 function setupMenus() {
   chrome.contextMenus.removeAll(() => {
-    chrome.contextMenus.create({ id: 'bnet-mute', title: 'Mute \u201C%s\u201D with BNet', contexts: ['selection'], documentUrlPatterns: X_URLS });
-    chrome.contextMenus.create({ id: 'bnet-as', title: 'Mute as\u2026', contexts: ['selection'], documentUrlPatterns: X_URLS });
+    chrome.contextMenus.create({ id: 'bnet-mute', title: 'Mute \u201C%s\u201D with BNet', contexts: ['selection'], documentUrlPatterns: WEB_URLS });
+    chrome.contextMenus.create({ id: 'bnet-as', title: 'Mute as\u2026', contexts: ['selection'], documentUrlPatterns: WEB_URLS });
     for (const [id, label] of CATS) {
-      chrome.contextMenus.create({ id: 'bnet:' + id, parentId: 'bnet-as', title: label, contexts: ['selection'], documentUrlPatterns: X_URLS });
+      chrome.contextMenus.create({ id: 'bnet:' + id, parentId: 'bnet-as', title: label, contexts: ['selection'], documentUrlPatterns: WEB_URLS });
     }
   });
 }
@@ -161,7 +161,7 @@ async function addPersonal(rawText, cat, tab, pageUrl) {
   if (allow && allow.some(a => a.key === key)) await chrome.storage.local.set({ allow: allow.filter(a => a.key !== key) });
   await appendLog([{ t: Date.now(), kind: 'missed', span: text, cat, cats: [cat], rule: 'manual', src: 'selection', ctx: '', url: (tab && tab.url) || pageUrl || '' }]);
   const label = (CATS.find(c => c[0] === cat) || [cat, cat])[1];
-  if (tab && tab.id != null) chrome.tabs.sendMessage(tab.id, { type: 'toast', text: 'Muted everywhere on X \u00B7 ' + label }).catch(() => {});
+  if (tab && tab.id != null) chrome.tabs.sendMessage(tab.id, { type: 'toast', text: 'Muted everywhere \u00B7 ' + label }).catch(() => {});
 }
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
@@ -321,7 +321,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 async function injectIntoOpenTabs() {
-  const tabs = await chrome.tabs.query({ url: X_URLS });
+  const tabs = await chrome.tabs.query({ url: WEB_URLS });
   for (const t of tabs) {
     try {
       await chrome.scripting.insertCSS({ target: { tabId: t.id }, files: ['src/content.css'] });

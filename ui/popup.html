@@ -13,11 +13,15 @@
     <img class="logo" src="../icons/icon48.png" alt="" width="26" height="26">
     <div class="id">
       <h1>BNet</h1>
-      <p id="status">Active on X</p>
+      <p id="status">Active</p>
     </div>
     <label class="switch" title="Turn BNet on or off"><input type="checkbox" id="enabled"><span></span></label>
   </header>
 
+  <div class="siteline" id="siteline" hidden>
+    <div class="sitetext"><b id="siteName"></b><small id="siteHint"></small></div>
+    <label class="switch" title="Turn BNet on or off for this site"><input type="checkbox" id="siteOn"><span></span></label>
+  </div>
   <div class="tabline" id="tabline" hidden><span class="mark"></span><span id="tabtext"></span><button class="link" id="reloadTab" hidden>Reload this tab</button></div>
 
   <section class="stage" aria-label="Preview">

@@ -5,7 +5,7 @@
 <h1 align="center">BNet</h1>
 
 <p align="center">
-  Mutes hateful and extremist speech on X, on your own computer.<br>
+  Mutes hateful and extremist speech on any website, on your own computer.<br>
   Only the offending words disappear. One click shows them again.
 </p>
 
@@ -24,7 +24,7 @@
 
 ## The design
 
-BNet reads X as you scroll and mutes only what is hateful: a slur, a claim about a group of people, a threat, an extremist code. The rest of the post stays exactly as it was, so a reply still makes sense around the gap.
+BNet reads the pages you visit (news, comments, forums, search results, X, Reddit, YouTube) and mutes only what is hateful: a slur, a claim about a group of people, a threat, an extremist code. The rest of the text stays exactly as it was, so a comment still makes sense around the gap.
 
 - **Only the offending words.** BNet finds the phrase, not the post. "I'm not racist, but I firmly believe that ___." keeps everything except the part that does the harm.
 - **Nothing leaves your computer.** Matching runs inside the browser. Words in images are read on your computer by an on-device text reader. There is no server and no account, and nothing you read is sent anywhere.
@@ -45,6 +45,7 @@ BNet reads X as you scroll and mutes only what is hateful: a slur, a claim about
 - Extremist codes and slogans, Holocaust denial and calls for violence
 - Counter-speech is treated gently: when a post reports or argues against a claim ("I hear people say…", "it's a myth that…"), BNet steps that claim down a level. Slurs stay hidden either way
 - Text inside images: memes and screenshots are read on your computer, coloured text on dark backgrounds included, and only the offending words are covered
+- Every website, with extra care on X for posts, quote posts, names and bios. Code blocks, text boxes and anything you are typing are never touched
 
 **How it looks**
 - Hide it: frosted glass, gradient veil, aurora, film grain, TV static, pixelate, glitch, ink bar, redacted stamp, bleep, comic swear, glyph scramble, sparkles, hearts, flowers and whisper. The real words are never drawn under these looks, only a meaningless decoy, so nothing can be read through the effect
@@ -55,10 +56,11 @@ BNet reads X as you scroll and mutes only what is hateful: a slur, a claim about
 **Control**
 - A strictness dial: Gentle (only the unmistakable), Balanced, or Strict (borderline phrasing too)
 - Mute just the words, or the whole sentence they sit in
-- Choose where BNet reads: posts and replies, quote posts, names and handles, bios, text in images
+- Turn BNet off for any site from the toolbar popup; Settings lists the sites you've switched off
+- Choose what BNet reads: page text and text in images everywhere, and posts, quote posts, names and bios on X
 - Pause for 15 minutes, an hour, or until tomorrow
 - The toolbar number counts what is muted on the page you are on
-- Right-click any text on X and choose **Mute "…" with BNet** to add it straight to My rules
+- Right-click any text on a page and choose **Mute "…" with BNet** to add it straight to My rules
 
 **Lists and learning**
 - The built-in list lives in `rules/core.txt`, a readable text file
@@ -82,9 +84,9 @@ BNet is not in a web store. You load it straight from this folder.
 2. Open `brave://extensions` (or `chrome://extensions`).
 3. Turn on **Developer mode**, top right.
 4. Click **Load unpacked** and choose the folder that holds `manifest.json`.
-5. Pin BNet from the puzzle-piece menu and open x.com.
+5. Pin BNet from the puzzle-piece menu and browse as usual.
 
-To update, replace the files and click the reload arrow on BNet's card, then reload your X tabs.
+To update, replace the files and click the reload arrow on BNet's card, then reload your open tabs.
 
 ## Rule lists
 
@@ -131,7 +133,7 @@ rules/core.txt        the built-in rule list (generated, see tools/)
 src/engine.js         normalising text and matching rules
 src/lists.js          reading and writing the rule-list format
 src/treatments.js     the looks and the voices
-src/content.js        finding text on X, muting and revealing it
+src/content.js        finding text on a page, muting and revealing it
 src/background.js     lists, the learning log, counts, the right-click menu
 src/offscreen.*       on-device text recognition for images (Tesseract)
 ui/                   the popup and the settings page
@@ -163,7 +165,8 @@ node tools/eval.js 2 test       # dial (1-3) and split (train, dev, test or all)
 ## Limits
 
 - English only for now.
-- BNet finds X's text by reading the page. X rebuilt its site in 2026; another rebuild could need an update.
+- BNet works on any page by reading its text blocks. Text drawn on a canvas (Google Docs, some games and maps) can't be read.
+- On X it knows the layout of posts and profiles. X rebuilt its site in 2026; another rebuild could need an update.
 - A word list catches the wording it knows. New phrasing gets through until someone adds a rule.
 - Muting inside any Mac app, beyond the browser, is planned for later.
 

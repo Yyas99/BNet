@@ -22,7 +22,7 @@ const DIAL_DESC = {
   2: 'Balanced: also mutes clear hateful claims about groups of people.',
   3: 'Strict: also mutes borderline phrasing. Expect the odd false alarm.'
 };
-const SRC_LABEL = { post: 'Post', quote: 'Quote', name: 'Name', bio: 'Bio', image: 'Image', selection: 'Your selection' };
+const SRC_LABEL = { web: 'Page', post: 'Post', quote: 'Quote', name: 'Name', bio: 'Bio', image: 'Image', selection: 'Your selection' };
 const KIND_LABEL = { hit: 'Muted', reveal: 'Revealed', not_hateful: 'Not hateful', missed: 'Added by hand' };
 
 let s;
@@ -148,6 +148,28 @@ function bindSwitches() {
     inp.checked = s.surfaces[inp.dataset.surface] !== false;
     inp.onchange = async () => { s = await store.saveSettings({ surfaces: { [inp.dataset.surface]: inp.checked } }); };
   });
+  renderOffSites();
+}
+
+function renderOffSites() {
+  const box = $('offSites');
+  if (!box) return;
+  box.textContent = '';
+  const list = (s.offSites || []).slice().sort();
+  if (!list.length) {
+    const it = el('div', 'item');
+    it.appendChild(el('small', '', 'None. To turn BNet off for a site, open the toolbar popup on that site and switch it off.'));
+    box.appendChild(it);
+    return;
+  }
+  for (const site of list) {
+    const it = el('div', 'item');
+    it.appendChild(el('div', '', site));
+    const b = el('button', 'btn ghost', 'Turn back on');
+    b.onclick = async () => { s = await store.saveSettings({ offSites: (s.offSites || []).filter(x => x !== site) }); renderOffSites(); };
+    it.appendChild(b);
+    box.appendChild(it);
+  }
 }
 
 /* ---------- rule lists ---------- */
@@ -293,7 +315,7 @@ function buildPrompt(log) {
   const revealed = pick('reveal', 60).map(x => ({ phrase: x.span, rule: x.rule }));
   const hits = pick('hit', 80).map(x => ({ phrase: x.span, kind: x.cat, rule: x.rule, context: (x.ctx || '').slice(0, 200) }));
   return [
-    'I use BNet, a browser extension that mutes hateful and extremist speech on X using on-device rule lists (like ad-blocker filter lists). Please write a new BNet rule list that improves its coverage, based on my learning log below.',
+    'I use BNet, a browser extension that mutes hateful and extremist speech on websites using on-device rule lists (like ad-blocker filter lists). Please write a new BNet rule list that improves its coverage, based on my learning log below.',
     '',
     'Reply with ONLY the rule list as plain text, no commentary, starting with:',
     '! Title: AI list ' + today(),
@@ -315,7 +337,7 @@ function buildPrompt(log) {
     '- Regexes are JavaScript sources without flags, run with "iu" on lowercased, accent-stripped text. Word edges are added automatically. Use \\s+ between words, never literal spaces. Do not escape "-" outside character classes.',
     '- Turn every item in "Missed" into a rule that catches it and close variants, without catching ordinary speech.',
     '- Turn every item in "Marked not hateful" into an allow rule.',
-    '- Add well-known current hate codes, slurs and slogans a list like this would miss, especially ones trending on X.',
+    '- Add well-known current hate codes, slurs and slogans a list like this would miss, especially ones trending online.',
     '- Keep false alarms low. Never mute neutral mentions of groups, news reporting, or people describing abuse they received.',
     '',
     'Missed (should have been muted):',
@@ -360,7 +382,7 @@ async function renderHistory() {
     k.appendChild(el('span', 'chip k-' + x.kind, x.kind === 'hit' ? (CAT_LABEL[x.cat] || x.cat) : KIND_LABEL[x.kind]));
     const w = el('td', '', SRC_LABEL[x.src] || x.src || '');
     const go = el('td');
-    if (x.url && /^https:\/\/(x|twitter)\.com\//.test(x.url)) { const a = el('a', '', 'Open'); a.href = x.url; a.target = '_blank'; a.rel = 'noopener'; go.appendChild(a); }
+    if (x.url && /^https?:\/\//.test(x.url)) { const a = el('a', '', 'Open'); a.href = x.url; a.target = '_blank'; a.rel = 'noopener'; go.appendChild(a); }
     tr.append(when, ph, k, w, go);
     body.appendChild(tr);
   }
@@ -372,7 +394,7 @@ async function renderAllow() {
   const box = $('allowList');
   box.textContent = '';
   const list = (allow || []).slice().reverse();
-  if (!list.length) { const it = el('div', 'item'); it.appendChild(el('small', '', 'Nothing here. When a muted phrase is harmless, reveal it on X and choose Not hateful.')); box.appendChild(it); return; }
+  if (!list.length) { const it = el('div', 'item'); it.appendChild(el('small', '', 'Nothing here. When a muted phrase is harmless, reveal it on the page and choose Not hateful.')); box.appendChild(it); return; }
   for (const a of list) {
     const it = el('div', 'item');
     const left = el('div');
@@ -433,6 +455,7 @@ async function init() {
     if (c.log && v === 'learning') renderLearning();
     if ((c.lists || c.userRules) && v === 'packs') renderPacks();
     if (c.allow && v === 'allow') renderAllow();
+    if (c.settings && c.settings.newValue) { s = BNetDefaults.merge(BNetDefaults.DEFAULTS, c.settings.newValue); renderOffSites(); }
   });
 
   show(location.hash.slice(1) || 'overview');

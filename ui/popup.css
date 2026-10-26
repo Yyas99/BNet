@@ -65,4 +65,10 @@ footer { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--edge);
 .tabline #tabtext { flex: 1; }
 .tabline .link { font-size: 12px; }
 
-.tabline[hidden], .resume[hidden], .pause[hidden] { display: none; }
+.siteline { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 9px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--edge); }
+.sitetext { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.sitetext b { font: 500 12.5px/1.2 var(--sans); color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sitetext small { font-size: 11.5px; color: var(--muted); }
+.siteline + .tabline { margin-top: 6px; }
+
+.siteline[hidden], .tabline[hidden], .resume[hidden], .pause[hidden] { display: none; }

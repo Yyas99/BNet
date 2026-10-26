@@ -84,7 +84,7 @@ before 1 /(?:typical|classic|bloody|stupid|another)/ $id=typical
 before 1 /(?:sick|tired)\s+of\s+(?:all\s+)?(?:these|those|the|you)?/ $id=sick-of
 
 ! Phrases: slogans, codes and stand-alone hateful lines
-phrase extremism 3 /14\s*[/\\|-]?\s*88/ $id=1488
+phrase extremism 3 /(?<![$€£#\d.,:/]\s?)(?<!\b(?:in|of|since|from|to|until|by|year|years|yr|page|pages|p|pp|paragraph|para|no|number|room|route|street|st|rd|road|ave|suite|apt|unit|item|order|ref|section|sec|vol|issue|ch|chapter|circa|ca|c|ad|bc|ce|bce|about|around|over|under|nearly|almost|approximately|approx|than)\.?\s+)14\s*[/\\|-]?\s*88(?![\d.,:]\d)(?!\s*(?:ad|bc|ce|bce|km|kg|mm|cm|m|mi|ft|lbs?|g|mg|ml|l|kcal|calories|people|persons|users|views|likes|words|pages|times|dollars|euros|pounds|usd|aud|eur|gbp|metres|meters|miles|feet|hours|hrs|minutes|mins|seconds|days|weeks|months|years)\b)/ $id=1488
 phrase extremism 3 /heil\s+hitler|sieg\s+heil|hitler\s+(?:was|is)\s+right|hitler\s+did\s+nothing\s+wrong|hitler\s+should\s+have\s+finished(?:\s+(?:the|his)\s+job)?|hitler\s+had\s+(?:a\s+point|the\s+right\s+idea)|bring\s+back\s+hitler|we\s+need\s+(?:another|a\s+new)\s+hitler/ $id=hitler
 phrase extremism 3 /gas\s+the\s+[\p{L}*]+|(?:to|into)\s+the\s+(?:gas\s+chambers?|ovens?)|final\s+solution|ethnic\s+cleansing\s+(?:is|was|now|is\s+needed)|race\s+cleansing|racial\s+holy\s+war/ $id=gas-the
 phrase extremism,religion 3 /6\s*mwe|(?:6|six)\s+million\s+(?:wasn'?t|was\s+not)\s+enough|oven\s+dodgers?/ $id=6mwe

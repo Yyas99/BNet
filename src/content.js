@@ -1,5 +1,6 @@
-/* BNet content script for X. Finds hateful phrases in posts, quotes, names, bios and image text,
- * and mutes only the offending words. Click a muted phrase to show it. */
+/* BNet content script. Runs on every site: finds hateful phrases in page text and image text,
+ * and mutes only the offending words. X gets extra handling for posts, quotes, names and bios.
+ * Click a muted phrase to show it. */
 (() => {
   'use strict';
   // An older copy (from before BNet was reloaded) shuts itself down; a live copy is never doubled.
@@ -15,19 +16,28 @@
   let compiled = null;
   let allowSet = new Set();
   let active = false;
+  let siteOff = false;
   let version = 0;
   let resumeTimer = null;
   const revealed = new Set();
   const spanInfo = new Map();
 
+  const SITE = location.hostname.replace(/^www\./, '');
+  const ON_X = /^(mobile\.)?(x|twitter)\.com$/.test(SITE);
+  // Off X, each text block owns only the text that is not inside a nested block of its own.
+  const OWN = !ON_X;
+  const SKIP = new Set(['script', 'style', 'noscript', 'template', 'textarea', 'select', 'option', 'svg', 'math', 'iframe', 'canvas', 'video', 'audio', 'object']);
+  const EXCLUDE = 'bnet-mask, bnet-chip, .bnet-img, script, style, noscript, template, svg, select, option, pre, code, kbd, samp';
+  const MAX_TEXT = 20000;
+
   // X's 2026 rebuild dropped data-testid; the old selectors stay as a fallback for the classic layout.
-  const SEL = {
+  const SEL = ON_X ? {
     posts: '[data-testid="tweetText"], [data-testid="card.layoutLarge.detail"], [data-testid="card.layoutSmall.detail"], [data-testid="trend"], [dir="auto"]',
     names: '[data-testid="User-Name"], [data-testid="UserName"], a[href^="/"]:not([href*="/status/"]):not([href^="/i/"]):not([href^="/compose"]):not([href^="/hashtag"]):not([href^="/search"]), [class*="text-headline"]',
     bios: '[data-testid="UserDescription"]',
     images: '[data-testid="tweetPhoto"] img, img[src*="pbs.twimg.com/media/"]'
-  };
-  const ALL_TEXT = [SEL.posts, SEL.names, SEL.bios].join(', ');
+  } : { posts: '', names: '', bios: '', images: 'img' };
+  const ALL_TEXT = [SEL.posts, SEL.names, SEL.bios].filter(Boolean).join(', ');
   const EDITABLE = '[contenteditable="true"], [contenteditable=""], textarea, input, [role="textbox"], bnet-chip';
 
   // Find the text block a node belongs to without relying on X's markup: known selectors first,
@@ -52,7 +62,11 @@
   function hostOf(node) {
     const el = node && (node.nodeType === 3 ? node.parentElement : node);
     if (!el || !el.closest) return null;
-    if (el.closest(EDITABLE) || el.closest('bnet-mask, bnet-chip, .bnet-img, script, style, noscript, svg')) return null;
+    if (el.closest(EDITABLE) || el.closest(ON_X ? 'bnet-mask, bnet-chip, .bnet-img, script, style, noscript, svg' : EXCLUDE)) return null;
+    if (OWN) {
+      const b = blockAncestor(el);
+      return b && b !== document.documentElement && !(b.isContentEditable) ? b : null;
+    }
     let h = el.closest(ALL_TEXT);
     if (!h || !smallBlock(h)) h = blockAncestor(el);
     if (!smallBlock(h)) return null;
@@ -80,7 +94,8 @@
     const packs = lists.filter(l => l.enabled !== false && l.data).map(l => l.data);
     compiled = E.compile(packs);
     allowSet = new Set((st.allow || []).map(a => a.key));
-    active = D.store.isActive(settings);
+    siteOff = (settings.offSites || []).includes(SITE);
+    active = D.store.isActive(settings) && !siteOff;
 
     clearTimeout(resumeTimer);
     if (settings.enabled && settings.pausedUntil > Date.now()) {
@@ -104,6 +119,7 @@
     return !!q && art.contains(q) && q !== art;
   }
   function surfaceOf(el) {
+    if (!ON_X) return 'web';
     if (el.matches(SEL.bios)) return 'bio';
     if (el.matches(SEL.names) && !el.matches('[data-testid="tweetText"], [dir="auto"]')) return 'name';
     if (!el.closest('article') && el.closest('main') && el.matches('[dir="auto"]')) return 'bio';
@@ -111,22 +127,32 @@
   }
   function surfaceOn(src) {
     const s = settings.surfaces;
-    return ({ post: s.posts, quote: s.quotes, name: s.names, bio: s.bios, image: s.images })[src] !== false;
+    return ({ post: s.posts, quote: s.quotes, name: s.names, bio: s.bios, image: s.images, web: s.web })[src] !== false;
   }
   function enabledCats() { return E.CAT_IDS.filter(c => settings.categories[c]); }
   function minSev() { return E.SEV_FOR_DIAL[settings.dial] || 2; }
 
-  function origText(el) {
-    let out = '';
+  // Walk the text a block owns, in order. Masks count as their original words.
+  function ownWalk(host, onText, onMask) {
     (function walk(n) {
       for (let c = n.firstChild; c; c = c.nextSibling) {
-        if (c.nodeType === 3) out += c.nodeValue;
+        if (c.nodeType === 3) onText(c);
         else if (c.nodeType === 1) {
-          if (c.localName === 'bnet-mask') out += c.dataset.o || '';
-          else walk(c);
+          if (c.localName === 'bnet-mask') { if (onMask) onMask(c); continue; }
+          if (OWN && (SKIP.has(c.localName) || c.localName === 'bnet-chip' || !isInline(c))) continue;
+          walk(c);
         }
       }
-    })(el);
+    })(host);
+  }
+  function origText(el) {
+    let out = '';
+    ownWalk(el, n => { out += n.nodeValue; }, m => { out += m.dataset.o || ''; });
+    return out;
+  }
+  function ownMasks(el) {
+    const out = [];
+    ownWalk(el, () => {}, m => out.push(m));
     return out;
   }
 
@@ -186,12 +212,11 @@
   function wrap(el, spans) {
     const nodes = [];
     let pos = 0;
-    const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    for (let n = tw.nextNode(); n; n = tw.nextNode()) {
+    ownWalk(el, n => {
       const len = n.nodeValue.length;
       nodes.push({ n, s: pos, e: pos + len });
       pos += len;
-    }
+    });
     for (let k = nodes.length - 1; k >= 0; k--) {
       const { n, s, e } = nodes[k];
       const segs = spans
@@ -204,7 +229,7 @@
   }
 
   function restore(el) {
-    const masks = el.querySelectorAll('bnet-mask');
+    const masks = ownMasks(el);
     if (!masks.length) return;
     const parents = new Set();
     masks.forEach(m => {
@@ -228,7 +253,7 @@
   }
 
   function permalink(el) {
-    if (!el.closest) return location.href;
+    if (!ON_X || !el.closest) return location.href;
     const wrap = el.closest('[data-href*="/status/"]');
     if (wrap) return new URL(wrap.getAttribute('data-href'), location.origin).href;
     const art = el.closest('article');
@@ -242,13 +267,13 @@
     const text = origText(el);
     const sig = text + '\u0000' + version;
     // Same text, same masks: nothing to do. If X re-rendered and wiped our masks, redo them.
-    if (el.__bnetSig === sig && el.querySelectorAll('bnet-mask').length === (el.__bnetMasks || 0)) return;
+    if (el.__bnetSig === sig && ownMasks(el).length === (el.__bnetMasks || 0)) return;
     el.__bnetSig = sig;
     el.__bnetMasks = 0;
     scannedCount++;
     try { restore(el); } catch (e) { /* X re-rendered under us */ }
     const src = surfaceOf(el);
-    if (!active || !compiled || !surfaceOn(src) || text.trim().length < 2) return;
+    if (!active || !compiled || !surfaceOn(src) || text.trim().length < 2 || text.length > MAX_TEXT) return;
     const spans = findSpans(text);
     if (!spans.length) return;
     const th = T.hash(text).toString(36);
@@ -259,7 +284,7 @@
       spanInfo.set(sp.key, { span: sp.text, cats: sp.cats, cat: sp.primary, rule: sp.rule, sev: sp.sev, src, ctx: text.slice(0, 600), url: permalink(el) });
     }
     try { wrap(el, spans); } catch (e) { try { restore(el); } catch (_) {} return; }
-    el.__bnetMasks = el.querySelectorAll('bnet-mask').length;
+    el.__bnetMasks = ownMasks(el).length;
     report(spans.map(sp => sp.key));
   }
 
@@ -311,9 +336,16 @@
     imgIO.observe(img);
   }
 
-  function ocrUrl(src) {
+  function ocrUrl(src, img) {
     try {
       const u = new URL(src);
+      if (!ON_X) {
+        if (!/^https?:$/.test(u.protocol) || /\.svg($|\?)/i.test(u.pathname)) return null;
+        // Only pictures big enough to carry readable text: memes, screenshots, banners.
+        const r = img.getBoundingClientRect();
+        if (img.naturalWidth < 200 || img.naturalHeight < 80 || r.width < 150 || r.height < 60) return null;
+        return u.href;
+      }
       if (!/(^|\.)pbs\.twimg\.com$/.test(u.hostname) || !u.pathname.startsWith('/media/')) return null;
       u.searchParams.set('name', 'small');
       if (!u.searchParams.get('format')) u.searchParams.set('format', 'jpg');
@@ -321,9 +353,12 @@
     } catch (e) { return null; }
   }
 
+  let ocrCount = 0;
   async function ocrImage(img) {
-    const url = ocrUrl(img.currentSrc || img.src);
-    if (!url) return;
+    if (!img.complete) { img.addEventListener('load', () => ocrImage(img), { once: true }); return; }
+    const url = ocrUrl(img.currentSrc || img.src, img);
+    if (!url || ocrCount >= 80) return;
+    ocrCount++;
     const res = await send({ type: 'ocr', url });
     if (!res || !res.ok || !img.isConnected) return;
     img.__bnetOcr = res;
@@ -336,7 +371,8 @@
 
   function applyImageMasks(img, fromResize) {
     const res = img.__bnetOcr;
-    const box = img.closest('[data-testid="tweetPhoto"]') || img.parentElement;
+    let box = ON_X ? (img.closest('[data-testid="tweetPhoto"]') || img.parentElement) : img.parentElement;
+    if (box && !ON_X && (box.localName === 'picture' || isInline(box))) box = blockAncestor(box);
     if (!res || !box) return;
     box.querySelectorAll(':scope > .bnet-img').forEach(n => n.remove());
     if (!active || !settings.surfaces.images || !compiled || !res.words.length) return;
@@ -504,15 +540,18 @@
     pending.add(el);
     if (!scheduled) { scheduled = true; requestAnimationFrame(flush); }
   }
+  // Long pages are read a slice at a time so scrolling never stutters.
   function flush() {
     scheduled = false;
     if (location.href !== pageUrl) pageCount();
-    const els = [...pending];
-    pending.clear();
-    for (const el of els) {
+    const until = performance.now() + 12;
+    for (const el of pending) {
+      pending.delete(el);
       try { processText(el); } catch (e) { /* keep going */ }
+      if (performance.now() > until) break;
     }
     mo.takeRecords();
+    if (pending.size && !scheduled) { scheduled = true; requestAnimationFrame(flush); }
   }
 
   function rescanAll() {
@@ -551,7 +590,7 @@
     if (!msg || msg.type !== 'status') return;
     const keys = new Set();
     document.querySelectorAll('bnet-mask[data-key], .bnet-img-mask[data-key]').forEach(n => keys.add(n.dataset.key));
-    sendResponse({ ok: true, active, muted: keys.size, scanned: scannedCount, rules: compiled ? compiled.count : 0 });
+    sendResponse({ ok: true, active, siteOff, site: SITE, muted: keys.size, scanned: scannedCount, rules: compiled ? compiled.count : 0 });
   });
 
   let toastTimer = null;
@@ -567,7 +606,7 @@
 
   window.__bnetStop = () => {
     mo.disconnect();
-    document.querySelectorAll('bnet-mask').forEach(m => { const el = m.parentElement; if (el) { try { restore(el.closest('[dir]') || el); } catch (e) {} } });
+    document.querySelectorAll('bnet-mask').forEach(m => { try { m.replaceWith(document.createTextNode(m.dataset.o || '')); } catch (e) {} });
     document.querySelectorAll('.bnet-img').forEach(n => n.remove());
     hideChip();
   };
