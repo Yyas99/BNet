@@ -1,4 +1,4 @@
-/* BNet rule lists: a plain-text, one-rule-per-line format in the spirit of ad-blocker filter lists.
+/* BNet rule lists: a plain-text, one-rule-per-line format.
  *
  *   ! Title: BNet Core            header fields (Title, Version, Description, Homepage, Expires)
  *   ! anything else after ! is a comment; "rule ! note" adds a note to a rule

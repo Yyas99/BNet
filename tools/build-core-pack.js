@@ -1,4 +1,4 @@
-// Builds rules/core.txt — the external, ad-blocker-style rule list.
+// Builds rules/core.txt — the external, plain-text rule list.
 // Rules are generated from word sets (groups x claims, threats, exclusions, stereotypes), not single sentences.
 // Patterns run on normalised lowercase text. Run: node tools/build-core-pack.js
 const fs = require('fs');
@@ -266,7 +266,7 @@ const pack = {
   groups, predicates, prefixes, slurs, phrases, allow
 };
 
-// Write the external rule list: rules/core.txt (one rule per line, ad-blocker style).
+// Write the external rule list: rules/core.txt (one rule per line).
 const Lists = require('../src/lists.js');
 let txt = Lists.fromPack(pack, { title: 'BNet Core', version: pack.version, description: pack.description, expires: '7 days' });
 const defs = [['COP', COP], ['MODAL', MODAL], ['OF', OF]];

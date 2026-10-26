@@ -111,7 +111,7 @@ async function migrate() {
   if (patch.userRules != null) await saveUserRules(patch.userRules);
 }
 
-/* ---------- rule lists (ad-blocker style) ---------- */
+/* ---------- rule lists ---------- */
 // "! Expires: 4 days (update frequency)", "12 hours", "1 week", "6h": clamped to an hour .. two weeks.
 function expiresMs(meta) {
   const m = String((meta && meta.expires) || '').match(/(\d+(?:\.\d+)?)\s*(h|hours?|d|days?|w|weeks?)\b/i);

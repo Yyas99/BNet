@@ -29,7 +29,7 @@ BNet reads the pages you visit (news, comments, forums, search results, X, Reddi
 - **Only the offending words.** BNet finds the phrase, not the post. "I'm not racist, but I firmly believe that ___." keeps everything except the part that does the harm.
 - **Nothing leaves your computer.** Matching runs inside the browser. Words in images are read on your computer by an on-device text reader. There is no server and no account, and nothing you read is sent anywhere.
 - **You stay in charge.** Click any muted phrase to read it, and click again to hide it. If BNet got it wrong, choose **Not hateful** and it leaves those words alone from then on.
-- **Rule lists, like an ad blocker.** What BNet mutes is described by plain-text lists, one rule per line. The built-in list ships with BNet; you can subscribe to others by address, import a file, or write your own in the **My rules** box.
+- **Rule lists you can read.** What BNet mutes is written down in plain-text lists, one rule per line. The built-in list ships with BNet; you can subscribe to others by address, import a file, or write your own in the **My rules** box.
 - **A look for every mood.** Hide the words under frosted glass, an Iris gradient, film grain or a bleep. Or let a voice rewrite them so the sentence turns kind: the group keeps its name and the claim flips into its opposite.
 
 <p align="center">
@@ -67,7 +67,7 @@ BNet reads the pages you visit (news, comments, forums, search results, X, Reddi
 **Lists and learning**
 - The built-in list lives in `rules/core.txt`, a readable text file
 - Subscribe to lists by address; they update on their own. Import lists from a file. Each list has its own switch
-- My rules is a text box with line-by-line error messages, like an ad blocker's own filters
+- My rules is a text box for your own rules, with line-by-line error messages
 - An optional learning log keeps what you muted by hand and what you marked as not hateful. **Copy request** turns it into a prompt for an AI assistant, which writes a new rule list you can import
 
 <p align="center">

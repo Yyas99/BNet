@@ -417,7 +417,7 @@ function buildPrompt(log) {
   const revealed = pick('reveal', 60).map(x => ({ phrase: x.span, rule: x.rule }));
   const hits = pick('hit', 80).map(x => ({ phrase: x.span, kind: x.cat, rule: x.rule, context: (x.ctx || '').slice(0, 200) }));
   return [
-    'I use BNet, a browser extension that mutes hateful and extremist speech on websites using on-device rule lists (like ad-blocker filter lists). Please write a new BNet rule list that improves its coverage, based on my learning log below.',
+    'I use BNet, a browser extension that mutes hateful and extremist speech on websites using on-device rule lists. Please write a new BNet rule list that improves its coverage, based on my learning log below.',
     '',
     'Reply with ONLY the rule list as plain text, no commentary, starting with:',
     '! Title: AI list ' + today(),
