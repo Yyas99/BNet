@@ -119,6 +119,7 @@
     return parts.join("[\\s._\\-*]*") + (/o$/.test(w) ? '(?:e?s)?' : '(?:s|z)?');
   }
 
+  const SUBJECT_SWITCH = /(?<![\p{L}'])(?:i|you|u|he|she|we|it)(?:'(?:m|re|s|ll|d|ve))?(?![\p{L}'])(?!\s+(?:think|thought|believe|swear|guess|mean|know|reckon|bet|feel|suppose|admit|agree|said|say|says|hear|heard|read|see|saw|told|tell|notice|noticed|find|found|realise|realize|must\s+admit|have\s+to\s+say|gotta\s+say)\b)/u;
   const L = '(?<![\\p{L}\\p{N}])';
   const R = '(?![\\p{L}\\p{N}])';
   const RL = '(?![\\p{L}])';
@@ -147,7 +148,7 @@
         for (const t of terms || []) byCat[cat].add(String(t).toLowerCase().trim());
       }
       for (const p of d.predicates || []) {
-        const re = tryRe('^([^.!?\\n;]{0,42}?)' + L + '(?:' + p.pattern + ')' + RL, 'iu', bad, 'predicate ' + p.id);
+        const re = tryRe('^([^.!?\\n;:]{0,42}?)' + L + '(?:' + p.pattern + ')' + RL, 'iu', bad, 'predicate ' + p.id);
         if (re) { preds.push({ re, sev: p.sev || 2, tags: p.tags || [], groups: p.groups || null, id: p.id }); count++; }
       }
       for (const p of d.prefixes || []) {
@@ -180,7 +181,8 @@
     for (const [cat, set] of Object.entries(byCat)) {
       const terms = [...set].filter(Boolean).sort((a, b) => b.length - a.length);
       if (!terms.length) continue;
-      const re = tryRe(L + '(?:' + trieSource(terms.map(charTokens)) + ')' + RL, 'giu', bad, 'groups ' + cat);
+      // "trans-shipment", "gay-friendly": a hyphen joins the word to something else.
+      const re = tryRe(L + '(?:' + trieSource(terms.map(charTokens)) + ')(?![\\p{L}]|-\\p{L})', 'giu', bad, 'groups ' + cat);
       if (re) { groups.push({ re, cat }); count += terms.length; }
     }
 
@@ -261,6 +263,9 @@
           if (p.groups && !p.groups.includes(g.cat)) continue;
           const pm = p.re.exec(after);
           if (!pm) continue;
+          // A new subject between the group and the claim means the claim is about someone else:
+          // "Muslims, he said, are…" is fine, "women's rights? I smell…" is not.
+          if (pm[1] && SUBJECT_SWITCH.test(pm[1])) continue;
           const gap = pm[1].length;
           let sev = p.sev - (gap > 24 ? 1 : 0);
           const end = ge + pm[0].length;

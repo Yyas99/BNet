@@ -117,9 +117,11 @@ The built-in list was scored against public research datasets of labelled posts.
 
 | Dataset | Hate caught | Clean posts muted |
 |---|---|---|
-| [Davidson et al.](https://github.com/t-davidson/hate-speech-and-offensive-language) (2017, tweets) | 53% | 4.6% |
-| [HateXplain](https://github.com/punyajoy/HateXplain) (2021, Twitter and Gab) | 75% | 13.7% |
-| [Dynabench hate](https://github.com/bvidgen/Dynamically-Generated-Hate-Speech-Dataset) (2021, written to fool filters), test split | 24% | 7.1% |
+| [Davidson et al.](https://github.com/t-davidson/hate-speech-and-offensive-language) (2017, tweets) | 52% | 4.6% |
+| [HateXplain](https://github.com/punyajoy/HateXplain) (2021, Twitter and Gab) | 76% | 12.9% |
+| [Dynabench hate](https://github.com/bvidgen/Dynamically-Generated-Hate-Speech-Dataset) (2021, written to fool filters), test split | 24% | 6.6% |
+
+Because BNet now reads every site, the list is also checked against 169,000 sentences of ordinary English from the [NLTK corpora](https://www.nltk.org/nltk_data/): news, novels, film reviews, forums and chat. It mutes something in 0.12% of them, mostly slurs and insults people really said (in the forum and overheard-conversation logs) and slurs quoted in novels. News reports of violence ("gunmen kill Christians"), history writing, speaker labels in transcripts and words that merely share a spelling with a slur (blood group ABO, a "fag break", a car's "tranny fluid") are left alone.
 
 Most of the "clean posts muted" are slurs quoted inside posts the datasets call harmless, which BNet hides on purpose. The adversarial set shows the ceiling of a word list: sarcasm, invented slurs and hate that only makes sense next to a picture slip through. Every miss you mute by hand makes the next list better.
 
@@ -150,6 +152,8 @@ There is no build step for the extension itself. The tools need [Node.js](https:
 node tools/build-core-pack.js   # rebuilds rules/core.txt from the word sets in the script
 node tools/test-engine.js       # quick checks on known hateful and harmless sentences
 node tools/fp.js                # harmless sentences that must never be muted
+python3 tools/make-benign.py    # downloads ordinary English text into data/benign.tsv
+node tools/web-fp.js            # how often that ordinary text gets muted, and by which rules
 ```
 
 To score the list, put the three datasets in `data/` and run the evaluation:

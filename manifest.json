@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "BNet",
   "short_name": "BNet",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Mutes hateful and extremist speech on any website, on your device. Tap any muted phrase to see it.",
   "icons": {
     "16": "icons/icon16.png",
